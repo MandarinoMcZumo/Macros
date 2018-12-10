@@ -1,0 +1,67 @@
+Sub Availability()
+    Dim xSh As Worksheet
+    Application.ScreenUpdating = False
+    For Each xSh In Worksheets
+        xSh.Select
+        Call Availability_BETA
+    Next
+    Application.ScreenUpdating = True
+End Sub
+
+
+
+Sub Availability_BETA()
+'
+' Availability Macro
+'
+' Acceso directo: Ctrl+Mayús+A
+'
+    Cells.Select
+    With Selection.Font
+        .Name = "Calibri"
+        .Strikethrough = False
+        .Superscript = False
+        .Subscript = False
+        .OutlineFont = False
+        .Shadow = False
+        .Underline = xlUnderlineStyleNone
+        .TintAndShade = 0
+        .ThemeFont = xlThemeFontMinor
+    End With
+
+    Selection.Font.Size = 10
+    Selection.ColumnWidth = 30.29
+    Selection.RowHeight = 17.5
+    Selection.Columns.AutoFit
+    Rows("12:12").Select
+    Rows("11:11").RowHeight = 9
+    Selection.RowHeight = 27
+    Range("B13").Select
+    ActiveWindow.FreezePanes = True
+    Range("B30:AI30").Select
+    Selection.FormatConditions.AddColorScale ColorScaleType:=3
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    Selection.FormatConditions(1).ColorScaleCriteria(1).Type = _
+        xlConditionValueLowestValue
+    With Selection.FormatConditions(1).ColorScaleCriteria(1).FormatColor
+        .Color = 8109667
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).ColorScaleCriteria(2).Type = _
+        xlConditionValuePercentile
+    Selection.FormatConditions(1).ColorScaleCriteria(2).Value = 50
+    With Selection.FormatConditions(1).ColorScaleCriteria(2).FormatColor
+        .Color = 8711167
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).ColorScaleCriteria(3).Type = _
+        xlConditionValueHighestValue
+    With Selection.FormatConditions(1).ColorScaleCriteria(3).FormatColor
+        .Color = 7039480
+        .TintAndShade = 0
+    End With
+    Range("A1").Select
+        
+        
+   
+End Sub
