@@ -1,0 +1,244 @@
+Sub Resumen_Cargas()
+
+'
+' FormatoGeneral Macro
+' Da formato a la tabla de vehículos agrupados
+'
+
+'
+
+ Application.ScreenUpdating = False
+    Selection.CurrentRegion.Select
+    Application.CutCopyMode = False
+    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$AM$1069"), , xlYes).Name _
+        = "Tabla1"
+    Range("Tabla1[#All]").Select
+    ActiveSheet.ListObjects("Tabla1").Name = "Agrupados"
+    Rows("1:1").Select
+    Selection.Insert Shift:=xlDown
+    Range("I1").Select
+    ActiveCell.FormulaR1C1 = "1"
+    Range("I1").Select
+    Selection.Copy
+    Range("Agrupados[[pickupDateFrom]:[deliveryDateTo]]").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, _
+        SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+    Selection.NumberFormat = "m/d/yyyy"
+    Range("I1").Select
+    Selection.Copy
+    ActiveWindow.ScrollColumn = 2
+    ActiveWindow.ScrollColumn = 3
+    ActiveWindow.ScrollColumn = 4
+    ActiveWindow.ScrollColumn = 5
+    ActiveWindow.ScrollColumn = 6
+    ActiveWindow.ScrollColumn = 7
+    ActiveWindow.ScrollColumn = 8
+    ActiveWindow.ScrollColumn = 9
+    ActiveWindow.ScrollColumn = 10
+    ActiveWindow.ScrollColumn = 11
+    ActiveWindow.ScrollColumn = 12
+    ActiveWindow.ScrollColumn = 13
+    ActiveWindow.ScrollColumn = 14
+    Range("Agrupados[[currentStatusDate]:[expectedPickupDate]]").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, _
+        SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+    Selection.NumberFormat = "m/d/yyyy"
+    ActiveWindow.ScrollColumn = 13
+    ActiveWindow.ScrollColumn = 12
+    ActiveWindow.ScrollColumn = 11
+    ActiveWindow.ScrollColumn = 10
+    ActiveWindow.ScrollColumn = 9
+    ActiveWindow.ScrollColumn = 8
+    ActiveWindow.ScrollColumn = 7
+    ActiveWindow.ScrollColumn = 6
+    ActiveWindow.ScrollColumn = 5
+    ActiveWindow.ScrollColumn = 4
+    ActiveWindow.ScrollColumn = 3
+    ActiveWindow.ScrollColumn = 2
+    ActiveWindow.ScrollColumn = 1
+    Range("Agrupados").Select
+    Selection.Replace What:="00/01/1900", Replacement:="", LookAt:=xlPart, _
+        SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, _
+        ReplaceFormat:=False
+    Columns("F:F").Select
+    Selection.Insert Shift:=xlToRight
+    Selection.Insert Shift:=xlToRight
+    Range("Agrupados[[#Headers],[Columna2]]").Select
+    ActiveCell.FormulaR1C1 = "Origin"
+    Range("Agrupados[[#Headers],[Columna1]]").Select
+    ActiveCell.FormulaR1C1 = "Destination"
+    Range("A1").Select
+
+'
+' SepararEntregados2 Macro
+' Selecciona las direcciones de entrega para cada ID y los copia en una hoja nueva
+'
+
+'
+    Sheets("Address").Select
+    Selection.CurrentRegion.Select
+    Application.CutCopyMode = False
+    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$Q$2185"), , xlYes).Name = _
+        "Tabla2"
+    Range("Tabla2[#All]").Select
+    ActiveSheet.ListObjects("Tabla2").Name = "Recogidos"
+    Columns("A:A").EntireColumn.AutoFit
+    ActiveSheet.ListObjects("Recogidos").Range.AutoFilter Field:=12, Criteria1 _
+        :="Entrega"
+    Range("Recogidos[[#Headers],[id_trOrder]]").Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets.Add After:=ActiveSheet
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    Application.CutCopyMode = False
+    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$Q$1105"), , xlYes).Name = _
+        "Tabla3"
+    Range("Tabla3[#All]").Select
+    ActiveSheet.ListObjects("Tabla3").Name = "Entregados"
+    Range("Entregados[[#Headers],[id_trOrder]]").Select
+    Sheets("Hoja1").Select
+    Sheets("Hoja1").Name = "Entregados"
+    Sheets("Address").Select
+    Sheets("Address").Name = "Recogidos"
+    Range("Q2185").Select
+    Selection.End(xlUp).Select
+    Range("Q3").Select
+    Range(Selection, Selection.End(xlToLeft)).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.EntireRow.Delete
+    Range("Recogidos[[#Headers],[id_trOrder]]").Select
+    ActiveSheet.ShowAllData
+    Sheets("trOrders").Select
+
+'
+' BuscarV3 Macro
+' BuscarV de Origen, Destino, y conversión a valores
+'
+
+'
+    Range("F3").Select
+    ActiveCell.FormulaR1C1 = _
+        "=+VLOOKUP([@[id_trOrder]],Recogidos[[id_trOrder]:[placeName]],3,0)"
+    Range("G3").Select
+    ActiveCell.FormulaR1C1 = _
+        "=+VLOOKUP([@[id_trOrder]],Entregados[[id_trOrder]:[town]],7,0)"
+    Range("Agrupados[[Origin]:[Destination]]").Select
+    Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Range("A1").Select
+    Application.CutCopyMode = False
+    
+
+    
+  '   DinámicaETC Macro
+' Crea una tabla dinámica para comparar número de IDs contratados y nº de coches con gestión de transporte realizada.
+'
+' Acceso directo: Ctrl+Mayús+Y
+'
+    Range("A3").Select
+    
+    ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, SourceData:= _
+        "Agrupados", Version:=6).CreatePivotTable TableDestination:="", _
+        TableName:="TablaDinámica1", DefaultVersion:=6
+
+    
+    With ActiveSheet.PivotTables("TablaDinámica1")
+        .ColumnGrand = True
+        .HasAutoFormat = True
+        .DisplayErrorString = False
+        .DisplayNullString = True
+        .EnableDrilldown = True
+        .ErrorString = ""
+        .MergeLabels = False
+        .NullString = ""
+        .PageFieldOrder = 2
+        .PageFieldWrapCount = 0
+        .PreserveFormatting = True
+        .RowGrand = True
+        .SaveData = True
+        .PrintTitles = False
+        .RepeatItemsOnEachPrintedPage = True
+        .TotalsAnnotation = False
+        .CompactRowIndent = 1
+        .InGridDropZones = False
+        .DisplayFieldCaptions = True
+        .DisplayMemberPropertyTooltips = False
+        .DisplayContextTooltips = True
+        .ShowDrillIndicators = True
+        .PrintDrillIndicators = False
+        .AllowMultipleFilters = False
+        .SortUsingCustomLists = True
+        .FieldListSortAscending = False
+        .ShowValuesRow = False
+        .CalculatedMembersInFilters = False
+        .RowAxisLayout xlCompactRow
+    End With
+    With ActiveSheet.PivotTables("TablaDinámica1").PivotCache
+        .RefreshOnFileOpen = False
+        .MissingItemsLimit = xlMissingItemsDefault
+    End With
+    ActiveSheet.PivotTables("TablaDinámica1").RepeatAllLabels xlDoNotRepeatLabels
+    With ActiveSheet.PivotTables("TablaDinámica1").PivotFields("Origin")
+        .Orientation = xlRowField
+        .Position = 1
+    End With
+    With ActiveSheet.PivotTables("TablaDinámica1").PivotFields("Destination")
+        .Orientation = xlRowField
+        .Position = 2
+    End With
+    With ActiveSheet.PivotTables("TablaDinámica1").PivotFields("providerName")
+        .Orientation = xlRowField
+        .Position = 3
+    End With
+    ActiveSheet.PivotTables("TablaDinámica1").AddDataField ActiveSheet.PivotTables( _
+        "TablaDinámica1").PivotFields("id_trOrder"), "Suma de id_trOrder", xlSum
+    With ActiveSheet.PivotTables("TablaDinámica1").PivotFields("Suma de id_trOrder" _
+        )
+        .Caption = "Cuenta de id_trOrder"
+        .Function = xlCount
+    End With
+    ActiveSheet.PivotTables("TablaDinámica1").AddDataField ActiveSheet.PivotTables( _
+        "TablaDinámica1").PivotFields("vhAmount"), "Suma de vhAmount", xlSum
+    With ActiveSheet.PivotTables("TablaDinámica1").PivotFields("deliveryDateTo")
+        .Orientation = xlRowField
+        .Position = 4
+    End With
+'    ActiveSheet.PivotTables("TablaDinámica1").PivotFields("deliveryDateTo"). _
+'        AutoGroup
+'    ActiveSheet.PivotTables("TablaDinámica1").PivotFields("Años").Orientation = _
+'        xlHidden
+'    ActiveSheet.PivotTables("TablaDinámica1").PivotFields("Trimestres"). _
+'        Orientation = xlHidden
+    ActiveSheet.PivotTables("TablaDinámica1").TableStyle2 = "PivotStyleMedium6"
+    ActiveSheet.PivotTables("TablaDinámica1").RowAxisLayout xlTabularRow
+    ActiveSheet.PivotTables("TablaDinámica1").PivotSelect "Origin[All;Total]", _
+        xlDataAndLabel, True
+    With Selection.Interior
+        .Pattern = xlSolid
+        .PatternColorIndex = xlAutomatic
+        .ThemeColor = xlThemeColorAccent5
+        .TintAndShade = -0.499984740745262
+        .PatternTintAndShade = 0
+    End With
+    With ActiveSheet.PivotTables("TablaDinámica1").PivotFields("status")
+        .Orientation = xlPageField
+        .Position = 1
+    End With
+    ActiveSheet.PivotTables("TablaDinámica1").PivotFields("status").ClearAllFilters
+    ActiveSheet.PivotTables("TablaDinámica1").PivotFields("status").CurrentPage = _
+        "Pte. Recoger"
+    Cells.Select
+    Cells.EntireColumn.AutoFit
+    Range("A2").Select
+    
+    Application.ScreenUpdating = True
+    MsgBox "Disfrute de su resumen autogenerado"
+    
+End Sub
+
+
