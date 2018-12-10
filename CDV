@@ -1,0 +1,111 @@
+Sub CDV()
+    Dim xSh As Worksheet
+    Application.ScreenUpdating = False
+    For Each xSh In Worksheets
+        xSh.Select
+        Call CDV_1
+    Next
+    Application.ScreenUpdating = True
+End Sub
+
+Sub CDV_1()
+'
+' CDV_1 Macro
+'
+
+'Inserta línea encima
+
+    Rows("1:1").Select
+    Selection.Insert Shift:=xlDown
+
+'Selecciona la segunda línea y le formato fecha
+    Rows("2:2").Select
+    Selection.NumberFormat = "d-m;@"
+    
+'Selecciona las 2 primeras líneas y les da formato negrita y centrado
+    Rows("1:2").Select
+    With Selection
+        .Font.Bold = True
+        .HorizontalAlignment = xlGeneral
+        .VerticalAlignment = xlCenter
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    
+    'Aplica la fórmula para determinar la inicial del día de la semana
+    Range("D1").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(+WEEKDAY(R[1]C,2)=1,""L"",IF(+WEEKDAY(R[1]C,2)=2,""M"",IF(+WEEKDAY(R[1]C,2)=3,""X"",IF(+WEEKDAY(R[1]C,2)=4,""J"",IF(+WEEKDAY(R[1]C,2)=5,""V"",IF(+WEEKDAY(R[1]C,2)=6,""S"",IF(+WEEKDAY(R[1]C,2)=7,""D"",)))))))"
+    Range("D1").Select
+    Selection.Copy
+    Range("E1:IT1").Select
+    ActiveSheet.Paste
+    
+    'Pinta de gris las 3 primeras columnas y las 2 primeras filas
+    Columns("A:C").Select
+    Application.CutCopyMode = False
+    With Selection.Interior
+        .Pattern = xlSolid
+        .PatternColorIndex = xlAutomatic
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = -0.349986266670736
+        .PatternTintAndShade = 0
+    End With
+    
+    Rows("1:2").Select
+    With Selection.Interior
+        .PatternColorIndex = xlAutomatic
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = -0.349986266670736
+        .PatternTintAndShade = 0
+    End With
+    
+    'Aplica tinte amarillo a los Sábados
+    Range("D1").Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlEqual, _
+        Formula1:="=""S"""
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .Color = 65535
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+'    Range("D2").Select
+'    Range(Selection, Selection.End(xlToRight)).Select
+    Range("D2").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:="=D$1=""S"""
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .Color = 65535
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+    Selection.AutoFill Destination:=Range("D2:IT2"), Type:=xlFillDefault
+    Range("D2:IT2").Select
+    Range("D3").Select
+    ActiveWindow.ScrollColumn = 2
+    ActiveWindow.ScrollColumn = 1
+    ActiveWindow.FreezePanes = True
+    Range("A1").Select
+End Sub
+
+
