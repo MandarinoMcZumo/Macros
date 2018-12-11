@@ -57,7 +57,7 @@ Sub Resumen_Caducados()
     Sheets("Address").Select
     Selection.CurrentRegion.Select
     Application.CutCopyMode = False
-    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$Q$2185"), , xlYes).Name = _
+    ActiveSheet.ListObjects.Add(xlSrcRange, Selection, , xlYes).Name = _
         "Tabla2"
     Range("Tabla2[#All]").Select
     ActiveSheet.ListObjects("Tabla2").Name = "Recogidos"
@@ -72,7 +72,7 @@ Sub Resumen_Caducados()
     ActiveSheet.Paste
     Application.CutCopyMode = False
     Application.CutCopyMode = False
-    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$Q$1105"), , xlYes).Name = _
+    ActiveSheet.ListObjects.Add(xlSrcRange, Selection, , xlYes).Name = _
         "Tabla3"
     Range("Tabla3[#All]").Select
     ActiveSheet.ListObjects("Tabla3").Name = "Entregados"
