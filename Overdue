@@ -1,4 +1,4 @@
-Sub Tabla_Caducados()
+Sub Resumen_Caducados()
 '
 ' FormatoGeneral Macro
 ' Da formato a la tabla de vehículos agrupados
@@ -8,8 +8,11 @@ Sub Tabla_Caducados()
    Application.ScreenUpdating = False
     Selection.CurrentRegion.Select
     Application.CutCopyMode = False
-    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$AM$1069"), , xlYes).Name _
+'    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$AM$1069"), , xlYes).Name _
+'        = "Tabla1"
+        ActiveSheet.ListObjects.Add(xlSrcRange, Selection, , xlYes).Name _
         = "Tabla1"
+
     Range("Tabla1[#All]").Select
     ActiveSheet.ListObjects("Tabla1").Name = "Agrupados"
     Rows("1:1").Select
@@ -25,37 +28,13 @@ Sub Tabla_Caducados()
     Selection.NumberFormat = "m/d/yyyy"
     Range("I1").Select
     Selection.Copy
-    ActiveWindow.ScrollColumn = 2
-    ActiveWindow.ScrollColumn = 3
-    ActiveWindow.ScrollColumn = 4
-    ActiveWindow.ScrollColumn = 5
-    ActiveWindow.ScrollColumn = 6
-    ActiveWindow.ScrollColumn = 7
-    ActiveWindow.ScrollColumn = 8
-    ActiveWindow.ScrollColumn = 9
-    ActiveWindow.ScrollColumn = 10
-    ActiveWindow.ScrollColumn = 11
-    ActiveWindow.ScrollColumn = 12
-    ActiveWindow.ScrollColumn = 13
-    ActiveWindow.ScrollColumn = 14
+    
     Range("Agrupados[[currentStatusDate]:[expectedPickupDate]]").Select
     Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, _
         SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
     Selection.NumberFormat = "m/d/yyyy"
-    ActiveWindow.ScrollColumn = 13
-    ActiveWindow.ScrollColumn = 12
-    ActiveWindow.ScrollColumn = 11
-    ActiveWindow.ScrollColumn = 10
-    ActiveWindow.ScrollColumn = 9
-    ActiveWindow.ScrollColumn = 8
-    ActiveWindow.ScrollColumn = 7
-    ActiveWindow.ScrollColumn = 6
-    ActiveWindow.ScrollColumn = 5
-    ActiveWindow.ScrollColumn = 4
-    ActiveWindow.ScrollColumn = 3
-    ActiveWindow.ScrollColumn = 2
-    ActiveWindow.ScrollColumn = 1
+    
     Range("Agrupados").Select
     Selection.Replace What:="00/01/1900", Replacement:="", LookAt:=xlPart, _
         SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, _
@@ -378,8 +357,8 @@ Sub Tabla_Caducados()
     Cells.EntireColumn.AutoFit
     Range("F3").Select
 '    Selection.Ungroup
-    ActiveSheet.PivotTables("TablaDinámica1").PivotFields("deliveryDateTo"). _
-        PivotFilters.Add2 Type:=xlBefore, Value1:="07/12/2018"
+'    ActiveSheet.PivotTables("TablaDinámica1").PivotFields("deliveryDateTo"). _
+'        PivotFilters.Add2 Type:=xlBefore, Value1:="07/12/2018"
     Range("A4").Select
     ActiveSheet.PivotTables("TablaDinámica1").PivotFields("providerName"). _
         Subtotals = Array(True, False, False, False, False, False, False, False, False, False, _
@@ -396,7 +375,7 @@ Sub Tabla_Caducados()
     Range("A2").Select
     Application.ScreenUpdating = True
     
-MsgBox "Por favor, recuerda actualizar el filtro de fecha del campo DeliveryDateTo."
+MsgBox "Por favor, revisa que no existan fechas erróneas en los campos pickupDate y deliveryDateTo de la hoja TrOrders." & vbNewLine & vbNewLine & "Por favor, recuerda actualizar el filtro de fecha del campo DeliveryDateTo."
 
     
     
