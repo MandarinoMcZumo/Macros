@@ -10,8 +10,6 @@ Sub Resumen_Cargas()
  Application.ScreenUpdating = False
     Selection.CurrentRegion.Select
     Application.CutCopyMode = False
-'    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$AM$1069"), , xlYes).Name _
-'        = "Tabla1"
         
     ActiveSheet.ListObjects.Add(xlSrcRange, Selection, , xlYes).Name _
         = "Tabla1"
@@ -28,7 +26,11 @@ Sub Resumen_Cargas()
     Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, _
         SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
+    Selection.Replace What:="0", Replacement:="", LookAt:=xlWhole, _
+    SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, _
+    ReplaceFormat:=False
     Selection.NumberFormat = "m/d/yyyy"
+    
     Range("I1").Select
     Selection.Copy
  
@@ -36,12 +38,13 @@ Sub Resumen_Cargas()
     Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, _
         SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
-    Selection.NumberFormat = "m/d/yyyy"
-   
-    Range("Agrupados").Select
-    Selection.Replace What:="00/01/1900", Replacement:="", LookAt:=xlPart, _
+        Selection.Replace What:="0", Replacement:="", LookAt:=xlWhole, _
         SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, _
         ReplaceFormat:=False
+    
+    Selection.NumberFormat = "m/d/yyyy"
+   
+
     Columns("F:F").Select
     Selection.Insert Shift:=xlToRight
     Selection.Insert Shift:=xlToRight
@@ -57,10 +60,11 @@ Sub Resumen_Cargas()
 '
 
 '
+Application.DisplayAlerts = False
     Sheets("Address").Select
     Selection.CurrentRegion.Select
     Application.CutCopyMode = False
-    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$Q$2185"), , xlYes).Name = _
+    ActiveSheet.ListObjects.Add(xlSrcRange, Selection, , xlYes).Name = _
         "Tabla2"
     Range("Tabla2[#All]").Select
     ActiveSheet.ListObjects("Tabla2").Name = "Recogidos"
@@ -75,7 +79,7 @@ Sub Resumen_Cargas()
     ActiveSheet.Paste
     Application.CutCopyMode = False
     Application.CutCopyMode = False
-    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$Q$1105"), , xlYes).Name = _
+    ActiveSheet.ListObjects.Add(xlSrcRange, Selection, , xlYes).Name = _
         "Tabla3"
     Range("Tabla3[#All]").Select
     ActiveSheet.ListObjects("Tabla3").Name = "Entregados"
@@ -84,15 +88,13 @@ Sub Resumen_Cargas()
     Sheets("Hoja1").Name = "Entregados"
     Sheets("Address").Select
     Sheets("Address").Name = "Recogidos"
-    Range("Q2185").Select
-    Selection.End(xlUp).Select
-    Range("Q3").Select
-    Range(Selection, Selection.End(xlToLeft)).Select
-    Range(Selection, Selection.End(xlDown)).Select
-    Selection.EntireRow.Delete
+    Range("Recogidos[[id_trOrder]:[mainAddress]]").Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.Delete
     Range("Recogidos[[#Headers],[id_trOrder]]").Select
     ActiveSheet.ShowAllData
     Sheets("trOrders").Select
+Application.DisplayAlerts = True
 
 '
 ' BuscarV3 Macro
