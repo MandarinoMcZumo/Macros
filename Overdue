@@ -22,7 +22,7 @@ Sub Resumen_Caducados()
     
     Range("I1").Select
     Selection.Copy
-    Range("Agrupados[pickupDateFrom],Agrupados[pickupDateTo],Agrupados[deliveryDateFrom],Agrupados[deliveryDateTo],Agrupados[creationDate],Agrupados[pendingDataDate],Agrupados[pendingPickupDate],Agrupados[pickupDate],Agrupados[deliveryDate],Agrupados[abandonedDate]").Select
+    Range("Agrupados[pickupDateFrom],Agrupados[pickupDateTo],Agrupados[deliveryDateFrom],Agrupados[deliveryDateTo],Agrupados[creationDate],Agrupados[currentStatusDate],Agrupados[pickupDate],Agrupados[deliveryDate],Agrupados[abandonedDate]").Select
     
     
     Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, _
@@ -395,3 +395,4 @@ MsgBox "Por favor, revisa que no existan fechas erróneas en los campos pickupDa
     
     
 End Sub
+
