@@ -10,8 +10,12 @@ Sub Resumen_Cargas()
  Application.ScreenUpdating = False
     Selection.CurrentRegion.Select
     Application.CutCopyMode = False
-    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$AM$1069"), , xlYes).Name _
+'    ActiveSheet.ListObjects.Add(xlSrcRange, Range("$A$1:$AM$1069"), , xlYes).Name _
+'        = "Tabla1"
+        
+    ActiveSheet.ListObjects.Add(xlSrcRange, Selection, , xlYes).Name _
         = "Tabla1"
+    
     Range("Tabla1[#All]").Select
     ActiveSheet.ListObjects("Tabla1").Name = "Agrupados"
     Rows("1:1").Select
@@ -27,37 +31,13 @@ Sub Resumen_Cargas()
     Selection.NumberFormat = "m/d/yyyy"
     Range("I1").Select
     Selection.Copy
-    ActiveWindow.ScrollColumn = 2
-    ActiveWindow.ScrollColumn = 3
-    ActiveWindow.ScrollColumn = 4
-    ActiveWindow.ScrollColumn = 5
-    ActiveWindow.ScrollColumn = 6
-    ActiveWindow.ScrollColumn = 7
-    ActiveWindow.ScrollColumn = 8
-    ActiveWindow.ScrollColumn = 9
-    ActiveWindow.ScrollColumn = 10
-    ActiveWindow.ScrollColumn = 11
-    ActiveWindow.ScrollColumn = 12
-    ActiveWindow.ScrollColumn = 13
-    ActiveWindow.ScrollColumn = 14
+ 
     Range("Agrupados[[currentStatusDate]:[expectedPickupDate]]").Select
     Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, _
         SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
     Selection.NumberFormat = "m/d/yyyy"
-    ActiveWindow.ScrollColumn = 13
-    ActiveWindow.ScrollColumn = 12
-    ActiveWindow.ScrollColumn = 11
-    ActiveWindow.ScrollColumn = 10
-    ActiveWindow.ScrollColumn = 9
-    ActiveWindow.ScrollColumn = 8
-    ActiveWindow.ScrollColumn = 7
-    ActiveWindow.ScrollColumn = 6
-    ActiveWindow.ScrollColumn = 5
-    ActiveWindow.ScrollColumn = 4
-    ActiveWindow.ScrollColumn = 3
-    ActiveWindow.ScrollColumn = 2
-    ActiveWindow.ScrollColumn = 1
+   
     Range("Agrupados").Select
     Selection.Replace What:="00/01/1900", Replacement:="", LookAt:=xlPart, _
         SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, _
@@ -240,5 +220,3 @@ Sub Resumen_Cargas()
     MsgBox "Disfrute de su resumen autogenerado"
     
 End Sub
-
-
