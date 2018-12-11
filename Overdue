@@ -69,6 +69,7 @@ Sub Resumen_Caducados()
 '
 
 '
+Application.DisplayAlerts = False
     Sheets("Address").Select
     Selection.CurrentRegion.Select
     Application.CutCopyMode = False
@@ -96,15 +97,13 @@ Sub Resumen_Caducados()
     Sheets("Hoja1").Name = "Entregados"
     Sheets("Address").Select
     Sheets("Address").Name = "Recogidos"
-    Range("Q2185").Select
-    Selection.End(xlUp).Select
-    Range("Q3").Select
-    Range(Selection, Selection.End(xlToLeft)).Select
-    Range(Selection, Selection.End(xlDown)).Select
-    Selection.EntireRow.Delete
+    Range("Recogidos[[id_trOrder]:[mainAddress]]").Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.Delete
     Range("Recogidos[[#Headers],[id_trOrder]]").Select
     ActiveSheet.ShowAllData
     Sheets("trOrders").Select
+Application.DisplayAlerts = True
 
 '
 ' BuscarV3 Macro
