@@ -370,9 +370,12 @@ Application.DisplayAlerts = True
     Cells.Select
     Cells.EntireColumn.AutoFit
     Range("F3").Select
-'    Selection.Ungroup
-'    ActiveSheet.PivotTables("TablaDinámica1").PivotFields("deliveryDateTo"). _
-'        PivotFilters.Add2 Type:=xlBefore, Value1:="07/12/2018"
+    
+    fecha_hoy = Application.InputBox(prompt:="Indique el día de hoy en formato dd/mm/aaaa", Type:=2)
+
+   ActiveSheet.PivotTables("TablaDinámica1").PivotFields("deliveryDateTo"). _
+   PivotFilters.Add2 Type:=xlBefore, Value1:=fecha_hoy
+
     Range("A4").Select
     ActiveSheet.PivotTables("TablaDinámica1").PivotFields("providerName"). _
         Subtotals = Array(True, False, False, False, False, False, False, False, False, False, _
