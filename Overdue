@@ -19,26 +19,41 @@ Sub Resumen_Caducados()
     Selection.Insert Shift:=xlDown
     Range("I1").Select
     ActiveCell.FormulaR1C1 = "1"
+    
     Range("I1").Select
     Selection.Copy
-    Range("Agrupados[[pickupDateFrom]:[deliveryDateTo]]").Select
+    Range("Agrupados[pickupDateFrom],Agrupados[pickupDateTo],Agrupados[deliveryDateFrom],Agrupados[deliveryDateTo],Agrupados[creationDate],Agrupados[pendingDataDate],Agrupados[pendingPickupDate],Agrupados[pickupDate],Agrupados[deliveryDate],Agrupados[abandonedDate]").Select
+    
+    
     Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, _
         SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
-    Selection.NumberFormat = "m/d/yyyy"
-    Range("I1").Select
-    Selection.Copy
     
-    Range("Agrupados[[currentStatusDate]:[expectedPickupDate]]").Select
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, _
-        SkipBlanks:=False, Transpose:=False
-    Application.CutCopyMode = False
-    Selection.NumberFormat = "m/d/yyyy"
-    
-    Range("Agrupados").Select
-    Selection.Replace What:="00/01/1900", Replacement:="", LookAt:=xlPart, _
+'Realiza una búsqueda y reemplazo de todas las celdas que tienen un valor 0
+
+    Selection.Replace What:="0", Replacement:="", LookAt:=xlWhole, _
         SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, _
         ReplaceFormat:=False
+    
+    
+'    Selection.NumberFormat = "m/d/yyyy"
+'    Range("I1").Select
+'    Selection.Copy
+    
+'    Range("Agrupados[[currentStatusDate]:[expectedPickupDate]]").Select
+'    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, _
+'        SkipBlanks:=False, Transpose:=False
+'    Application.CutCopyMode = False
+'
+'    Range("Agrupados").Select
+'    Selection.Replace What:="00/01/1900", Replacement:="", LookAt:=xlPart, _
+'        SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, _
+'        ReplaceFormat:=False
+'
+    
+    Selection.NumberFormat = "m/d/yyyy"
+    
+
     Columns("F:F").Select
     Selection.Insert Shift:=xlToRight
     Selection.Insert Shift:=xlToRight
