@@ -1,7 +1,6 @@
-Sub Cuadro_SIT_General()
-'
-' Cuadro_SIT_General Macro
-'
+Sub Creacion_Diarios()
+    
+    Application.ScreenUpdating = False
     Sheets("Sucursales").Select
     Selection.ListObject.QueryTable.Refresh BackgroundQuery:=False
     Sheets("Master").Select
@@ -11,5 +10,15 @@ Sub Cuadro_SIT_General()
         Range("B6").Value = "Ventas"
     Sheets("Hoja1").Select
     ActiveSheet.PivotTables("Tabla dinámica1").PivotCache.Refresh
+    
+    
+    ActiveWorkbook.SaveAs Filename:="\\dataserver\CUADRO SITUACION\2016 a 2020\2018\SIT.GRAL_ " _
+    & Format(Now(), "YYYY.MM.DD") & ".xlsx" _
+    , FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
 
+    On Error Resume Next
+    Kill "C:\Desktop\Testing*.csv*"
+    On Error GoTo 0
+    Application.ScreenUpdating = True
+    
 End Sub
