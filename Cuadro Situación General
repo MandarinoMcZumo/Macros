@@ -1,0 +1,15 @@
+Sub Cuadro_SIT_General()
+'
+' Cuadro_SIT_General Macro
+'
+    Sheets("Sucursales").Select
+    Selection.ListObject.QueryTable.Refresh BackgroundQuery:=False
+    Sheets("Master").Select
+    Selection.ListObject.QueryTable.Refresh BackgroundQuery:=False
+    Sheets("Sucursales").Select
+        Range("B5").Value = "Ventas"
+        Range("B6").Value = "Ventas"
+    Sheets("Hoja1").Select
+    ActiveSheet.PivotTables("Tabla dinámica1").PivotCache.Refresh
+
+End Sub
