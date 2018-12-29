@@ -3,7 +3,7 @@ Sub Creacion_Diarios()
     
 'Desactiva la visualización
     Application.ScreenUpdating = False
-    
+    Application.DisplayAlerts = False
 'Abre el libro base
     Workbooks.Open Filename:="\\dataserver\CUADRO SITUACION\2016 a 2020\2018\Libro111111.xlsx"
     
