@@ -7,6 +7,7 @@ Dim margen As Integer
 Dim hora_alerta As String
 
 
+
 fila = 5
 margen = InputBox("Introduce el nº de vehículos que deseas dejar de margen", "Modulation check", "Introduce el número aquí")
 
@@ -21,8 +22,9 @@ While columna < 24
 If Cells(fila, "C").Offset(0, columna) <= margen + Cells(fila, "C").Offset(-2, 1) Then
 
 alerta = Cells(fila, "A").Offset(-3, 0)
-hora_alerta = Cells(1, "A").Offset(0, columna + 3)
+hora_alerta = Cells(1, "A").Offset(0, columna + 1)
 MsgBox ("Tienes la modulación ajustada el día " & alerta & " a las " & hora_alerta)
+
 
 
 Else
@@ -63,7 +65,7 @@ While columna < 24
 If Cells(fila, "C").Offset(0, columna) <= margen + Cells(fila, "C").Offset(-1, 1) Then
 
 alerta = Cells(fila, "A").Offset(-2, 0)
-hora_alerta = Cells(1, "A").Offset(0, columna + 3)
+hora_alerta = Cells(1, "A").Offset(0, columna + 1)
 
 MsgBox ("Tienes la modulación ajustada el día " & alerta & " a las " & hora_alerta)
 
@@ -84,4 +86,3 @@ MsgBox ("Modulación comprobada")
 
 
 End Sub
-
