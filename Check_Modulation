@@ -1,0 +1,87 @@
+Sub Check_Modulation_Kiosk()
+
+Dim fila As Integer
+Dim columna As Integer
+Dim alerta As String
+Dim margen As Integer
+Dim hora_alerta As String
+
+
+fila = 5
+margen = InputBox("Introduce el nº de vehículos que deseas dejar de margen", "Modulation check", "Introduce el número aquí")
+
+While fila < 30
+
+columna = 0
+
+While columna < 24
+
+
+
+If Cells(fila, "C").Offset(0, columna) <= margen + Cells(fila, "C").Offset(-2, 1) Then
+
+alerta = Cells(fila, "A").Offset(-3, 0)
+hora_alerta = Cells(1, "A").Offset(0, columna + 3)
+MsgBox ("Tienes la modulación ajustada el día " & alerta & " a las " & hora_alerta)
+
+
+Else
+
+End If
+
+
+columna = columna + 1
+Wend
+
+
+fila = fila + 4
+Wend
+
+MsgBox ("Modulación comprobada")
+
+
+End Sub
+
+Sub Check_Modulation()
+
+Dim fila As Integer
+Dim columna As Integer
+Dim alerta As String
+Dim margen As Integer
+Dim hora_alerta As String
+
+
+fila = 4
+margen = InputBox("Introduce el nº de vehículos que deseas dejar de margen", "Modulation check", "Introduce el número aquí")
+
+While fila < 24
+
+columna = 0
+
+While columna < 24
+
+If Cells(fila, "C").Offset(0, columna) <= margen + Cells(fila, "C").Offset(-1, 1) Then
+
+alerta = Cells(fila, "A").Offset(-2, 0)
+hora_alerta = Cells(1, "A").Offset(0, columna + 3)
+
+MsgBox ("Tienes la modulación ajustada el día " & alerta & " a las " & hora_alerta)
+
+
+Else
+
+End If
+
+
+columna = columna + 1
+Wend
+
+
+fila = fila + 3
+Wend
+
+MsgBox ("Modulación comprobada")
+
+
+End Sub
+
