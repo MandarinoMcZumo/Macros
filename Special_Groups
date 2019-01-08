@@ -3,7 +3,7 @@ Sub CDV_Grupos_Especiales_Check()
 
 Dim grupo As Range, dia As Integer, Var As Integer
 
-Application.ScreenUpdating = False
+'Application.ScreenUpdating = False
 
 Range("B:B").UnMerge
 
@@ -24,8 +24,8 @@ For Each grupo In Range("B1:B300")
             While Var < 60
         
                 With grupo
-                    .Offset(8, 2) = grupo.Offset(7, 0) + grupo.Offset(0, 2) + grupo.Offset(0, 3) - grupo.Offset(1, 2) - grupo.Offset(2, 2) - grupo.Offset(3, 2)      'Calcula el stock del día actual
-                    .Offset(8, 3 + Var) = .Offset(8, 2 + Var) + .Offset(0, 4 + Var) - .Offset(1, 3 + Var) - grupo.Offset(2, 3 + Var) - grupo.Offset(3, 3 + Var)     'Calcula el stock para el resto de días
+                    .Offset(8, 2) = grupo.Offset(7, 0) + grupo.Offset(0, 2) + grupo.Offset(0, 3) - grupo.Offset(1, 2) - grupo.Offset(2, 2) - grupo.Offset(3, 2) + grupo.Offset(5, 2) - grupo.Offset(6, 2)    'Calcula el stock del día actual
+                    .Offset(8, 3 + Var) = .Offset(8, 2 + Var) + .Offset(0, 4 + Var) - .Offset(1, 3 + Var) - grupo.Offset(2, 3 + Var) - grupo.Offset(3, 3 + Var) + grupo.Offset(5, 3 + Var) - grupo.Offset(6, 3 + Var)    'Calcula el stock para el resto de días
                 End With
               
         Var = Var + 1
@@ -58,9 +58,8 @@ For Each grupo In Range("B1:B300")
 
 Next
 
-Application.ScreenUpdating = True
+'Application.ScreenUpdating = True
 
-MsgBox ("Búsqueda y revisión de la disponibilidad de los grupos especiales realizada.")
+'MsgBox ("Búsqueda y revisión de la disponibilidad de los grupos especiales realizada.")
 
 End Sub
-
