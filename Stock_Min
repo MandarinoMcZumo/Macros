@@ -1,0 +1,36 @@
+Sub Stock_Min()
+
+Dim celda As Range
+Dim grupo As String, oficina As String
+Dim rnk As Integer
+Dim stock
+Dim looper As Integer
+
+oficina = ActiveSheet.Name
+
+Sheets.Add.Name = oficina & "_Stock"
+
+Sheets(oficina).Activate
+
+For Each celda In Range("B3:B300")
+    If celda = "AA" Or celda = "BB" Or celda = "CC" Or celda = "D" Or celda = "N" Or celda = "R" Or celda = "T" Or celda = "V" Or celda = "C1" Or celda = "VV" Or celda = "E" Or celda = "DD" Or celda = "F" Or celda = "FF" Or celda = "S" Or celda = "L" Or celda = "LK" Or celda = "RK" Or celda = "P" Or celda = "PP" Or celda = "J" Or celda = "JJ" Or celda = "K" Or celda = "I" Or celda = "G" Then
+       
+        stock = WorksheetFunction.Min(celda.Offset(7, 3), celda.Offset(7, 4))
+        
+        Sheets(oficina & "_Stock").Range("A2").Offset(0 + looper, 0).Value = celda.Value
+        Sheets(oficina & "_Stock").Range("A2").Offset(0 + looper, 1).Value = stock
+    
+         looper = looper + 1
+    End If
+    
+     
+
+Next celda
+
+Sheets(oficina & "_Stock").Range("A1").Value = oficina
+Sheets(oficina & "_Stock").Range("A1").Interior.Color = vbYellow
+Sheets(oficina & "_Stock").Range("A1").Font.Bold = True
+
+Sheets(oficina & "_Stock").Activate
+
+End Sub
