@@ -1,0 +1,107 @@
+Sub Extraer_familias()
+
+Dim office As Range, value_seeker As Range
+Dim office_name As String
+Dim looper As Integer
+
+
+
+Application.ScreenUpdating = False
+
+    Dim xWs As Worksheet
+    Application.DisplayAlerts = False
+    For Each xWs In Application.ActiveWorkbook.Worksheets
+        If xWs.Name <> "SARG2" Then
+            xWs.Delete
+        End If
+    Next
+    Application.DisplayAlerts = True
+
+
+For Each office In Range("D1:DU1")
+
+    office_name = office
+
+    Sheets.Add.Name = office_name
+
+        With Range("A1")
+            .Value = "Ofreceré..."
+            .Interior.Color = RGB(155, 187, 89)
+            .Font.Color = vbWhite
+            .Font.Bold = True
+        End With
+        
+        With Range("B1")
+            .Value = "siempre que la suma de estos sea..."
+            .Interior.Color = RGB(155, 187, 89)
+            .Font.Color = vbWhite
+            .Font.Bold = True
+        End With
+        
+        With Range("C1")
+            .Value = "Periodo"
+            .Interior.Color = RGB(155, 187, 89)
+            .Font.Color = vbWhite
+            .Font.Bold = True
+        End With
+            
+        With Range("D1")
+            .Value = "Parámetro"
+            .Interior.Color = RGB(155, 187, 89)
+            .Font.Color = vbWhite
+            .Font.Bold = True
+        End With
+            
+            
+    Worksheets("SARG2").Activate
+
+    For Each value_seeker In Range(Cells(3, office.Column), Cells(200, office.Column))
+        
+           If IsEmpty(value_seeker) = False Then
+            
+                               
+                With Worksheets(office_name).Cells(2 + looper, 1)
+                    .Value = Worksheets("SARG2").Cells(value_seeker.Row, 1).Value
+                    .Interior.Color = RGB(235, 241, 221)
+                    .Font.Bold = True
+                
+                End With
+                
+                
+                With Worksheets(office_name).Cells(2 + looper, 2)
+                    .Value = Worksheets("SARG2").Cells(value_seeker.Row, 2).Value
+                    .Interior.Color = RGB(235, 241, 221)
+                    .Font.Bold = True
+                
+                End With
+                
+                
+                With Worksheets(office_name).Cells(2 + looper, 3)
+                    .Value = Worksheets("SARG2").Cells(value_seeker.Row, 3).Value
+                    .Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+                
+                With Worksheets(office_name).Cells(2 + looper, 4)
+                    .Value = value_seeker.Value
+                    .Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+            
+            looper = looper + 1
+            
+           End If
+        Worksheets(office_name).Columns("A:E").AutoFit
+    Next value_seeker
+
+   
+   looper = 0
+
+Next office
+       
+Application.ScreenUpdating = True
+
+  
+End Sub
