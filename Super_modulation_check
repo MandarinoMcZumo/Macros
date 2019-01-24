@@ -1,0 +1,152 @@
+Sub Super_check()
+
+If Range("B4") = "Salidas K" Then
+
+Call Check_Modulation_Kiosk
+
+Else: Check_Modulation
+
+End If
+
+
+End Sub
+
+Private Sub Check_Modulation_Kiosk()
+
+Dim fila As Integer
+Dim columna As Integer
+Dim alerta As String
+Dim margen As Integer
+Dim hora_alerta As String
+Dim dias As Integer, contar_bucle As Integer
+Dim contar_dias As Range
+
+fila = 5
+contar_bucle = 0
+margen = InputBox("Introduce el Stock de Seguridad de la oficina", "Modulation check", "Introduce el número aquí")
+
+
+For Each contar_dias In Range("B2:B300")
+
+If contar_dias.Value = "Dispon." Then
+
+dias = dias + 1
+
+ElseIf IsEmpty(contar_dias) = True Then GoTo curriondo
+
+End If
+
+Next contar_dias
+
+curriondo:
+
+
+While contar_bucle < dias
+
+columna = 0
+
+While columna < 24
+
+
+
+If Cells(fila, "C").Offset(0, columna) <= margen Then
+
+' + Cells(fila, "C").Offset(-2, 1) En v0
+
+
+alerta = Cells(fila, "A").Offset(-3, 0)
+hora_alerta = Cells(1, "A").Offset(0, columna + 1)
+
+Cells(fila, "C").Offset(0, columna).Font.Bold = True
+MsgBox ("Tienes la modulación ajustada el día " & alerta & " a las " & hora_alerta)
+
+
+
+Else
+
+End If
+
+
+columna = columna + 1
+Wend
+
+
+fila = fila + 4
+contar_bucle = contar_bucle + 1
+Wend
+
+MsgBox ("Modulación comprobada")
+
+End Sub
+
+Private Sub Check_Modulation()
+
+Dim fila As Integer
+Dim columna As Integer
+Dim alerta As String
+Dim margen As Integer
+Dim hora_alerta As String
+Dim dias As Integer
+Dim contar_dias As Range
+Dim contar_bucle As Integer
+
+
+margen = InputBox("Introduce el Stock de Seguridad de la oficina", "Modulation check", "Introduce el número aquí")
+dias = 0
+contador_bucle = 0
+
+For Each contar_dias In Range("B2:B300")
+
+If contar_dias.Value = "Dispon." Then
+
+dias = dias + 1
+
+ElseIf IsEmpty(contar_dias) = True Then GoTo curriondorl
+
+End If
+
+Next contar_dias
+
+curriondorl:
+Debug.Print contar_dias
+
+fila = 4
+
+
+While contador_bucle < dias
+
+columna = 0
+
+While columna < 24
+
+If Cells(fila, "C").Offset(0, columna) <= margen Then
+
+' + Cells(fila, "C").Offset(-1, 1) Then en v0
+
+
+alerta = Cells(fila, "A").Offset(-2, 0)
+hora_alerta = Cells(1, "A").Offset(0, columna + 1)
+
+MsgBox ("Tienes la modulación ajustada el día " & alerta & " a las " & hora_alerta)
+Cells(fila, "C").Offset(0, columna).Font.Bold = True
+
+Else
+
+End If
+
+
+columna = columna + 1
+Wend
+
+
+fila = fila + 3
+contador_bucle = contador_bucle + 1
+Wend
+
+MsgBox ("Modulación comprobada")
+
+
+End Sub
+
+
+
