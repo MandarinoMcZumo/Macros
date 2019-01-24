@@ -93,7 +93,7 @@ curriondo: While bucle < contador_dias
 
 For Each celda In Range("D4:Z4").Offset(cambio_dia, 0)
 
-celda.Value = celda.Offset(0, -1) + celda.Offset(-2, -1) - celda.Offset(-1, 0)
+celda.FormulaR1C1 = "=+RC[-1]+R[-2]C[-1]-R[-1]C"
 
 Next celda
 
@@ -201,7 +201,7 @@ curriondo: While bucle < contador_dias
 
 For Each celda In Range("D5:Z5").Offset(cambio_dia, 0)
 
-celda.Value = celda.Offset(0, -1) + celda.Offset(-3, -1) - celda.Offset(-2, 0) - celda.Offset(-1, 0)
+celda.FormulaR1C1 = "=+RC[-1]+R[-3]C[-1]-R[-2]C-R[-1]C"
 
 Next celda
 
