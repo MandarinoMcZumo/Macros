@@ -1,0 +1,51 @@
+Sub buscar_aplicar_familias()
+
+
+
+Dim grupo As Range, parametro As Range
+Dim dia As Integer, Var As Integer, stock As Integer, n_familia As Integer
+Dim office_name As String, grp_1 As String, grp_2 As String, grp_3 As String, grp_4 As String, grp_5 As String, grp_6 As String
+Dim wb As String, ws As Worksheet
+
+
+wb = ActiveWorkbook.Name
+office_name = ActiveSheet.Name
+Debug.Print office_name
+
+For Each grupo In Range("B1:B300")
+
+    If grupo = "AA" Or celda = "BB" Or celda = "CC" Or celda = "D" Or celda = "N" Or celda = "R" Or celda = "T" Or celda = "V" Or celda = "C1" Or celda = "VV" Or celda = "E" Or celda = "DD" Or celda = "F" Or celda = "FF" Or celda = "S" Or celda = "L" Or celda = "LK" Or celda = "RK" Or celda = "P" Or celda = "PP" Or celda = "J" Or celda = "JJ" Or celda = "K" Or celda = "I" Or celda = "G" Then
+    
+     
+    Workbooks("SARG2.xlsx").Activate
+    Sheets(office_name).Activate
+        
+    n_familia = 1
+
+         For Each parametro In Workbooks("SARG2.xlsx").ActiveSheet.Range("f2", Range("f2").End(xlDown))
+
+            If parametro = grupo Then
+
+                grp_n_familia = parametro.Offset(0, 1).Value
+                stock = parametro.Offset(0, 2).Value
+                n_familia = n_familia + 1
+
+            End If
+
+
+            Debug.Print grupo.Value
+            Debug.Print grp_n_familia
+            Debug.Print grupo.Value
+            Debug.Print stock
+
+         Next parametro
+
+        End If
+
+Next grupo
+
+
+Workbooks(wb).Activate
+
+End Sub
+
