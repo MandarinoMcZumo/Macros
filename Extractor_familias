@@ -18,7 +18,7 @@ Application.ScreenUpdating = False
     Application.DisplayAlerts = True
 
 
-For Each office In Range("D1:DU1")
+For Each office In Range("D1:DS1")
 
     office_name = office
 
@@ -123,7 +123,7 @@ Application.ScreenUpdating = True
   
 End Sub
 
-Sub conversor_parametros()
+Private Sub conversor_parametros()
 
 On Error Resume Next
 
@@ -208,5 +208,3 @@ Next mycell
 
 
 End Sub
-
-
