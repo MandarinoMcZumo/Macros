@@ -1,0 +1,29 @@
+Sub buscar_Oficina()
+On Error Resume Next
+
+Dim wb As String
+Dim office_name As String
+
+'Workbooks("CDV_(" & Format(Now(), "DDMMYYYY") & "-8-250_dias)..xls").Activate
+
+Application.ScreenUpdating = False
+
+wb = ActiveWorkbook.Name
+
+Debug.Print wb
+
+office_name = ActiveSheet.Name
+
+Debug.Print office_name
+
+Workbooks("SARG2.xlsx").Activate
+
+Sheets(office_name).Activate
+
+Windows(ActiveWorkbook).WindowState = xlMaximized
+
+Workbooks(wb).Sheets(office_name).Activate
+
+Application.ScreenUpdating = True
+
+End Sub
