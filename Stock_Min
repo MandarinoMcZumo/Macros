@@ -1,9 +1,12 @@
-Sub Stock_Min()
+
+Sub Stock_Real()
+On Error Resume Next
+
 
 Dim celda As Range
 Dim grupo As String, oficina As String
 Dim rnk As Integer
-Dim stock
+Dim stock_1 As Integer, stock_2 As Integer, stock_3 As Integer
 Dim looper As Integer
 
 oficina = ActiveSheet.Name
@@ -15,10 +18,15 @@ Sheets(oficina).Activate
 For Each celda In Range("B3:B300")
     If celda = "AA" Or celda = "BB" Or celda = "CC" Or celda = "D" Or celda = "N" Or celda = "R" Or celda = "T" Or celda = "V" Or celda = "C1" Or celda = "VV" Or celda = "E" Or celda = "DD" Or celda = "F" Or celda = "FF" Or celda = "S" Or celda = "L" Or celda = "LK" Or celda = "RK" Or celda = "P" Or celda = "PP" Or celda = "J" Or celda = "JJ" Or celda = "K" Or celda = "I" Or celda = "G" Then
        
-        stock = WorksheetFunction.Min(celda.Offset(7, 3), celda.Offset(7, 4))
+        stock_1 = celda.Offset(7, 3)
+        stock_2 = celda.Offset(7, 4)
+        stock_3 = celda.Offset(7, 2)
         
         Sheets(oficina & "_Stock").Range("A2").Offset(0 + looper, 0).Value = celda.Value
-        Sheets(oficina & "_Stock").Range("A2").Offset(0 + looper, 1).Value = stock
+        Sheets(oficina & "_Stock").Range("A2").Offset(0 + looper, 1).Value = stock_3
+        Sheets(oficina & "_Stock").Range("A2").Offset(0 + looper, 2).Value = stock_1
+        Sheets(oficina & "_Stock").Range("A2").Offset(0 + looper, 3).Value = stock_2
+    
     
          looper = looper + 1
     End If
@@ -30,6 +38,17 @@ Next celda
 Sheets(oficina & "_Stock").Range("A1").Value = oficina
 Sheets(oficina & "_Stock").Range("A1").Interior.Color = vbYellow
 Sheets(oficina & "_Stock").Range("A1").Font.Bold = True
+
+Sheets(oficina & "_Stock").Range("B1").Value = "Viernes"
+Sheets(oficina & "_Stock").Range("C1").Value = "Sábado"
+Sheets(oficina & "_Stock").Range("D1").Value = "Domingo"
+
+With Sheets(oficina & "_Stock").Range("B1:D1")
+.Font.Italic = True
+.Font.Color = vbWhite
+.Interior.Color = vbBlue
+End With
+
 
 Sheets(oficina & "_Stock").Activate
 
