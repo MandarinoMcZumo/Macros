@@ -5,42 +5,50 @@ Sub buscar_aplicar_familias()
 Dim grupo As Range, parametro As Range
 Dim dia As Integer, Var As Integer, stock As Integer, n_familia As Integer
 Dim office_name As String, grp_1 As String, grp_2 As String, grp_3 As String, grp_4 As String, grp_5 As String, grp_6 As String
-Dim wb As String, ws As Worksheet
+Dim wb As String, ws As String
 
 
 wb = ActiveWorkbook.Name
+ws = ActiveSheet.Name
 office_name = ActiveSheet.Name
+
+Debug.Print wb
+Debug.Print ws
 Debug.Print office_name
 
-For Each grupo In Range("B1:B300")
+For Each grupo In Workbooks(wb).Sheets(ws).Range("B1:B300")              'Si la celda coincide para uno de los valores correspondientes a un grupo entonces:
 
-    If grupo = "AA" Or celda = "BB" Or celda = "CC" Or celda = "D" Or celda = "N" Or celda = "R" Or celda = "T" Or celda = "V" Or celda = "C1" Or celda = "VV" Or celda = "E" Or celda = "DD" Or celda = "F" Or celda = "FF" Or celda = "S" Or celda = "L" Or celda = "LK" Or celda = "RK" Or celda = "P" Or celda = "PP" Or celda = "J" Or celda = "JJ" Or celda = "K" Or celda = "I" Or celda = "G" Then
+    If grupo = "AA" Or grupo = "BB" Or grupo = "CC" Or grupo = "D" Or grupo = "N" Or grupo = "R" Or grupo = "T" Or grupo = "V" Or grupo = "C1" Or grupo = "VV" Or grupo = "E" Or grupo = "DD" Or grupo = "F" Or grupo = "FF" Or grupo = "S" Or grupo = "L" Or grupo = "LK" Or grupo = "RK" Or grupo = "P" Or grupo = "PP" Or grupo = "J" Or grupo = "JJ" Or grupo = "K" Or grupo = "I" Or grupo = "G" Or grupo = "4A" Then
     
-     
-    Workbooks("SARG2.xlsx").Activate
-    Sheets(office_name).Activate
+    Debug.Print grupo.Value                     'imprimo el grupo que vamos a tratar
+    
+    Workbooks("SARG2.xlsm").Activate            'Te vas al SARG2 y lo activas
+    Sheets(office_name).Activate                'Buscas la hoja que coincide con el nombre de la oficina
         
-    n_familia = 1
+    n_familia = 1                               'Reseteas el parámetro para almacenar el primer miembro de la familia
+    
 
-         For Each parametro In Workbooks("SARG2.xlsx").ActiveSheet.Range("f2", Range("f2").End(xlDown))
+         For Each parametro In Workbooks("SARG2.xlsm").ActiveSheet.Range("f2", Range("f2").End(xlDown))                    'Comienzas un bucle que va a pasar por todas las celdas de la columna F en el SARG2
 
-            If parametro = grupo Then
+            If parametro = grupo Then                                       'Si el parámetro coincide con el grupo del CDV, entonces:
 
-                grp_n_familia = parametro.Offset(0, 1).Value
-                stock = parametro.Offset(0, 2).Value
-                n_familia = n_familia + 1
+                grp_n_familia = parametro.Offset(0, 1).Value                'El primer grupo cubierto lo almaceno en la variable grp_n_familia
+                stock = parametro.Offset(0, 2).Value                        'Almaceno el stock de seguridad para esa familia en stock
+                
+                    Debug.Print grp_n_familia                               'Imprimo el parámetro
+                    Debug.Print stock                                       'Imprimo el stock
+                
+                n_familia = n_familia + 1                                   'Aumento en 1 la variable grp_n_familia y vuelvo a aplicar el bucle para cubrir todos los miembros de la familia
 
-            End If
+            End If                                                          'Termina el bucle para almacenar parámetros
 
+         Next parametro                                                     'Comienza de nuevo para buscar más líneas
+    
+    Else: GoTo etiqueta                         'En caso de que la celda no coincida con ningún grupo, salta a la siguiente
 
-            Debug.Print grupo.Value
-            Debug.Print grp_n_familia
-            Debug.Print grupo.Value
-            Debug.Print stock
+    End If
 
-         Next parametro
-
-        End If
+etiqueta:
 
 Next grupo
 
@@ -48,4 +56,3 @@ Next grupo
 Workbooks(wb).Activate
 
 End Sub
-
