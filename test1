@@ -2,9 +2,10 @@ Sub buscar_aplicar_familias()
 
 
 
-Dim grupo As Range, parametro As Range
-Dim dia As Integer, Var As Integer, stock As Integer, n_familia As Integer
-Dim office_name As String, grp_1 As String, grp_2 As String, grp_3 As String, grp_4 As String, grp_5 As String, grp_6 As String
+Dim grupo As Range, parametro As Range, grupo_oup As Range
+Dim dia As Integer, Var As Integer, stock As Integer, n_familia As Integer, bucle_oup As Integer, cubierto As Integer
+Dim office_name As String, grp_1 As String, grp_2 As String, grp_3 As String, grp_4 As String, grp_5 As String, grp_6 As String, grp_7 As String, grp_8 As String
+Dim oup_master As Integer, oup_1 As String, oup_2 As String, oup_3 As String, oup_4 As String, oup_5 As String, oup_6 As String, oup_7 As String, oup_8 As String
 Dim wb As String, ws As String
 
 
@@ -12,22 +13,25 @@ wb = ActiveWorkbook.Name
 ws = ActiveSheet.Name
 office_name = ActiveSheet.Name
 
-Debug.Print wb
-Debug.Print ws
-Debug.Print office_name
+Debug.Print "Nombre del libro activo: " & wb
+Debug.Print "Nombre de la hoja activa: " & ws
+Debug.Print "Nombre de la oficina: " & office_name
 
 For Each grupo In Workbooks(wb).Sheets(ws).Range("B1:B300")              'Si la celda coincide para uno de los valores correspondientes a un grupo entonces:
 
     If grupo = "AA" Or grupo = "BB" Or grupo = "CC" Or grupo = "D" Or grupo = "N" Or grupo = "R" Or grupo = "T" Or grupo = "V" Or grupo = "C1" Or grupo = "VV" Or grupo = "E" Or grupo = "DD" Or grupo = "F" Or grupo = "FF" Or grupo = "S" Or grupo = "L" Or grupo = "LK" Or grupo = "RK" Or grupo = "P" Or grupo = "PP" Or grupo = "J" Or grupo = "JJ" Or grupo = "K" Or grupo = "I" Or grupo = "G" Or grupo = "4A" Then
     
-    Debug.Print grupo.Value                     'imprimo el grupo que vamos a tratar
+    Debug.Print " "
+    Debug.Print "Grupo ofertado: " & grupo.Value                   'imprimo el grupo que vamos a tratar
     
     Workbooks("SARG2.xlsm").Activate            'Te vas al SARG2 y lo activas
     Sheets(office_name).Activate                'Buscas la hoja que coincide con el nombre de la oficina
         
     n_familia = 1                               'Reseteas el parámetro para almacenar el primer miembro de la familia
-    
-
+    bucle_oup = 1
+    cubierto = 2
+         
+         
          For Each parametro In Workbooks("SARG2.xlsm").ActiveSheet.Range("f2", Range("f2").End(xlDown))                    'Comienzas un bucle que va a pasar por todas las celdas de la columna F en el SARG2
 
             If parametro = grupo Then                                       'Si el parámetro coincide con el grupo del CDV, entonces:
@@ -35,22 +39,85 @@ For Each grupo In Workbooks(wb).Sheets(ws).Range("B1:B300")              'Si la 
                 grp_n_familia = parametro.Offset(0, 1).Value                'El primer grupo cubierto lo almaceno en la variable grp_n_familia
                 stock = parametro.Offset(0, 2).Value                        'Almaceno el stock de seguridad para esa familia en stock
                 
-                    Debug.Print grp_n_familia                               'Imprimo el parámetro
-                    Debug.Print stock                                       'Imprimo el stock
+                    Debug.Print "Grupo cubierto: " & grp_n_familia                              'Imprimo el parámetro
+                    Debug.Print "Stock de seguridad: " & stock
+                    
                 
                 n_familia = n_familia + 1                                   'Aumento en 1 la variable grp_n_familia y vuelvo a aplicar el bucle para cubrir todos los miembros de la familia
 
             End If                                                          'Termina el bucle para almacenar parámetros
-
+                    
+            
+            
+       If n_familia > 1 Then                                           'Si ha encontrado los parámetros (n_familia > 1, comienza el bucle para aplicar las prioridades de upgrade (oup)
+         
+         'Debug.Print "Valor para n_familia: " & n_familia
+         
+         While bucle_oup < n_familia                                       'El bucle se aplicará tantas veces como grupos contemple la familia
+            
+                    
+                    Sheets("OUP").Activate                                  'Activamos la hoja con el orden de upgrade, dentro de SARG2
+                    
+                    'Debug.Print "Bucle asignación de prioridades: " & bucle_oup
+                    'Debug.Print "Número de elementos contemplados en la familia: " & n_familia
+                    
+                    
+                    For Each grupo_oup In Range("A2", Range("A2").End(xlDown))  'Para cada celda en el rango...
+                    
+                        If grupo_oup = grupo Then                       'Si la celda contiene un grupo que coincide con el grupo ofertado, entonces
+                        
+                            oup_master = grupo_oup.Offset(0, 1)         'Almacena la prioridad en la variable oup_master
+                            
+                            
+                            Debug.Print "Prioridad Orden Upgrade grupo ofertado: " & oup_master
+                        
+                        bucle_oup = bucle_oup + 1
+                        
+                        End If
+                        
+                       
+                        
+'                        If grupo_oup = grp_n_familia Then          'si la celda contiene un grupo contemplado en la familia, entonces...
+'
+'                         'Debug.Print "Grupo cubierto: " & grp_cubierto
+'
+'                            grp_n_familia = grupo_oup.Offset(0, 1)      'Almacena la prioridad en la variable oup_bucle_oup (que es oup_1, oup_2... según la vuelta del bucle)
+'
+'
+'                            Debug.Print "Prioridad Orden Upgrade grupo cubierto: " & oup_bucle_oup
+'
+'                        cubierto = cubierto + 1
+'                        bucle_oup = bucle_oup + 1
+                        
+                        
+                        
+'                        End If
+                                                                               'Ahora genera un bucle nuevo con variables nuevas
+                        
+                    Next grupo_oup                                          'Realiza el bucle para todos los grupos de la familia
+                
+                    Sheets(office_name).Activate
+                
+            Wend                                                     'Termina el bucle cuando el bucle se haya repetido tantas veces como miembros de la familia hayan
+         
+         End If
+                                                                     'En caso de que no haya encontrado el parámetro buscado (variable grupo) pasa a la siguiente celda
+            
          Next parametro                                                     'Comienza de nuevo para buscar más líneas
     
+    
+
     Else: GoTo etiqueta                         'En caso de que la celda no coincida con ningún grupo, salta a la siguiente
+
 
     End If
 
 etiqueta:
 
+
+
 Next grupo
+
 
 
 Workbooks(wb).Activate
