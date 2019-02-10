@@ -1,0 +1,188 @@
+Sub buscar_aplicar_familias()
+
+
+
+Dim grupo As Range, parametro As Range, grupo_oup As Range
+Dim stock As Integer, n_familia As Integer
+Dim office_name As String, grp_1 As String
+Dim oup_master As Integer, oup_1 As Integer
+Dim wb As String, ws As String
+Dim celdita As Range, celdota As Range, valorgrupocubierto As Range, valorgrupoofrecido As Range, dia As Integer, columna As Integer, fila As Integer
+
+
+wb = ActiveWorkbook.Name
+ws = ActiveSheet.Name
+office_name = ActiveSheet.Name
+
+Debug.Print "Nombre del libro activo: " & wb
+Debug.Print "Nombre de la hoja activa: " & ws
+Debug.Print "Nombre de la oficina: " & office_name
+
+
+
+'Si la celda coincide para uno de los valores correspondientes a un grupo entonces:
+
+For Each grupo In Workbooks(wb).Sheets(ws).Range("B1:B300")
+
+    If grupo = "AA" Or grupo = "BB" Or grupo = "CC" Or grupo = "D" Or grupo = "N" Or grupo = "R" Or grupo = "T" Or grupo = "V" Or grupo = "C1" Or grupo = "VV" Or grupo = "E" Or grupo = "DD" Or grupo = "F" Or grupo = "FF" Or grupo = "S" Or grupo = "L" Or grupo = "LK" Or grupo = "RK" Or grupo = "P" Or grupo = "PP" Or grupo = "J" Or grupo = "JJ" Or grupo = "K" Or grupo = "I" Or grupo = "G" Or grupo = "4A" Then
+    
+'Hay que añadir la creación de la línea en la que se determinará si ofrezco o no, y cuánto
+
+grupo.Offset(8, 0).EntireRow.Insert
+
+    
+'imprimo el grupo que vamos a tratar
+    Debug.Print " "
+    Debug.Print "Grupo ofertado: " & grupo.Value
+    
+    
+'Te vas al SARG2 y lo activas
+    Workbooks("SARG2.xlsm").Activate
+    
+'Buscas la hoja que coincide con el nombre de la oficina
+    Sheets(office_name).Activate
+        
+         
+'Comienzas un bucle que va a pasar por todas las celdas de la columna F en el SARG2
+         For Each parametro In Workbooks("SARG2.xlsm").ActiveSheet.Range("f2", Range("f2").End(xlDown))
+
+'Si el parámetro coincide con el grupo del CDV, entonces:
+            If parametro = grupo Then
+                
+'Busca la hoja con el orden upgrade, y la activa
+                Sheets("OUP").Activate
+
+'Aplica un bucle para buscar la prioridad de upgrade para el grupo ofrecido y la guarda en oup_master
+                For Each grupo_oup In Range("A2", Range("A2").End(xlDown))
+                    
+                        If grupo_oup = grupo Then
+                        
+                            oup_master = grupo_oup.Offset(0, 1)
+                        
+                        End If
+                
+               Next grupo_oup
+
+'Ahora vuelve a la hoja de parámetros del SARG2 para la oficina, y busca los grupos cubiertos
+            Sheets(ws).Activate
+            
+            grp_1 = parametro.Offset(0, 1)
+            
+'Ahora busca la prioridad de upgrade para ese grupo y la almacena en oup_1
+            Sheets("OUP").Activate
+            
+            For Each grupo_oup In Range("A2", Range("A2").End(xlDown))
+                    
+                        If grupo_oup = grp_1 Then
+                        
+                            oup_1 = grupo_oup.Offset(0, 1)
+                            
+                        End If
+                
+            Next grupo_oup
+            
+'Ahora vuelve a la hoja de parámetros del SARG2 para la oficina, para buscar el stock de seguridad para la familia, y almacenarlo en stock
+                Sheets(ws).Activate
+
+                grp_n_familia = parametro.Offset(0, 1).Value
+                stock = parametro.Offset(0, 2).Value
+                
+                    
+ 'Imprimimos los resultados para ver que efectivamente se han recogido de forma adecuada
+                    Debug.Print "Grupo cubierto: " & grp_n_familia
+                    Debug.Print "Stock de seguridad: " & stock
+                    Debug.Print "Prioridad Orden Upgrade grupo ofertado: " & oup_master
+                    Debug.Print "Prioridad Orden Upgrade grupo cubierto: " & oup_1
+                
+               
+'Termina el bucle para almacenar parámetros
+            End If
+
+
+'Aquí es donde tendré que incorporar la parque en que aplica un bucle a 60 días en el CDV en el que busca el valor del grupo ofertado,
+'lo compara con el grupo cubierto en base al orden upgrade de cada uno, y tiene en cuenta el margen de seguridad
+'Cada vez que cambie de valor por añadir más grupos en la familia, simplemente actualiza el valor resultante
+
+If oup_master < oup_1 Then
+dia = 0
+
+    For Each celdita In Range("b3:b300")
+    
+        If celdita = grp_n_familia Then
+            columna = celdita.Column
+            fila = celdita.Row
+        End If
+
+    Next celdita
+    
+While dia <= 60
+
+    grupo.Offset(8, 2 + dia).Value = grupo.Offset(8, 2 + dia).Value + WorksheetFunction.Max((Cells(fila, columna).Offset(7, 2 + dia)), 0)
+
+    dia = dia + 1
+Wend
+dia = 0
+
+End If
+
+
+If oup_master = oup_1 Then
+dia = 0
+
+   
+    
+While dia <= 60
+
+    grupo.Offset(8, 2 + dia).Value = grupo.Offset(7, 2 + dia).Value '+ grupo.Offset(8, 2 + dia).Value
+    dia = dia + 1
+Wend
+
+dia = 0
+
+End If
+
+
+If oup_master > oup_1 Then
+dia = 0
+'    For Each celdota In Range("b3:b300")
+'        If celdota = grupo Then
+'            valorgrupoofrecido = celdota.Offset(7, 2)
+'        End If
+'    Next celdota
+    
+    For Each celdita In Range("b3:b300")
+    
+        If celdita = grp_n_familia Then
+            columna = celdita.Column
+            fila = celdita.Row
+        End If
+
+
+    Next celdita
+    
+While dia <= 60
+    grupo.Offset(8, 2 + dia).Value = grupo.Offset(8, 2 + dia).Value + Cells(fila, columna).Offset(7, 2 + dia) - WorksheetFunction.Min(Cells(fila, columna).Offset(7, 2 + dia).Value, 0)
+
+    dia = dia + 1
+Wend
+dia = 0
+
+End If
+
+
+        Next parametro
+    
+
+    End If
+
+etiqueta:
+
+
+'Comienza a buscar el siguiente grupo
+Next grupo
+
+
+
+Workbooks(wb).Activate
+
+End Sub
