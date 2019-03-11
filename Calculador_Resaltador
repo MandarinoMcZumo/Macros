@@ -7,6 +7,13 @@ stock_grupo = InputBox("Por favor, introduce el stock de seguridad para este gru
 
 Application.ScreenUpdating = False
 
+With ActiveCell.Offset(0, -1)
+.Value = "Ofreciendo (" & stock_grupo & ")"
+.Interior.Color = vbYellow
+.Font.Bold = True
+
+End With
+
 
 Range(ActiveCell, ActiveCell.Offset(0, 60)).Select
 
@@ -15,8 +22,6 @@ For Each celda In Selection
 celda.FormulaR1C1 = "=IF((MIN(R[-1]C:R[-1]C[4])-" & stock_grupo & ")<=0,""NO"",MIN(R[-1]C:R[-1]C[4])-" & stock_grupo & ")"
 
 Next celda
-
-
 
 Application.ScreenUpdating = True
 
