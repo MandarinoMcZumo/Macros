@@ -1,5 +1,7 @@
 
 Sub Calculador()
+On Error GoTo fin
+
 
 Dim stock_grupo As Integer, celda As Range
 
@@ -7,10 +9,12 @@ stock_grupo = InputBox("Por favor, introduce el stock de seguridad para este gru
 
 Application.ScreenUpdating = False
 
-With ActiveCell.Offset(0, -1)
-.Value = "Ofreciendo (" & stock_grupo & ")"
+
+With Cells(ActiveCell.Row, 3)
+.Value = "Ofreciendo (S.S.=" & stock_grupo & ")"
 .Interior.Color = vbYellow
 .Font.Bold = True
+.Font.Size = 8.5
 
 End With
 
@@ -22,6 +26,8 @@ For Each celda In Selection
 celda.FormulaR1C1 = "=IF((MIN(R[-1]C:R[-1]C[4])-" & stock_grupo & ")<=0,""NO"",MIN(R[-1]C:R[-1]C[4])-" & stock_grupo & ")"
 
 Next celda
+
+fin:
 
 Application.ScreenUpdating = True
 
