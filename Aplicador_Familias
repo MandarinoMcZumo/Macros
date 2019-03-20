@@ -25,7 +25,7 @@ Debug.Print "Nombre de la oficina: " & office_name
 
 'Si la celda coincide para uno de los valores correspondientes a un grupo entonces:
 
-For Each grupo In Workbooks(wb).Sheets(ws).Range("B1:B300")
+For Each grupo In Workbooks(wb).Sheets(ws).Range("B1:B350")
 
     If grupo = "4A" Or grupo = "AA" Or grupo = "BB" Or grupo = "CC" Or grupo = "D" Or grupo = "N" Or grupo = "R" Or grupo = "T" Or grupo = "V" Or grupo = "C1" Or grupo = "VV" Or grupo = "E" Or grupo = "DD" Or grupo = "F" Or grupo = "FF" Or grupo = "S" Or grupo = "L" Or grupo = "LK" Or grupo = "RK" Or grupo = "P" Or grupo = "PP" Or grupo = "J" Or grupo = "JJ" Or grupo = "K" Or grupo = "I" Or grupo = "G" Or grupo = "4A" Then
     
@@ -52,16 +52,16 @@ End With
     
 'Te vas al SARG2 y lo activas. Buscas la hoja que coincide con el nombre de la oficina.
     
-    Workbooks("SARG2.xlsm").Sheets(office_name).Activate
+    Workbooks("SARG2.xlsx").Sheets(office_name).Activate
            
          
 'Comienzas un bucle que va a pasar por todas las celdas de la columna F en el SARG2
-         For Each parametro In Workbooks("SARG2.xlsm").ActiveSheet.Range("f2", Range("f2").End(xlDown))
+         For Each parametro In Workbooks("SARG2.xlsx").ActiveSheet.Range("f2", Range("f2").End(xlDown))
 
 'Si el parámetro coincide con el grupo del CDV, entonces:
             If parametro = grupo Then
             
-            Workbooks("SARG2.xlsm").Activate
+            Workbooks("SARG2.xlsx").Activate
             
                 
 'Busca la hoja con el orden upgrade, y la activa
@@ -144,7 +144,7 @@ End If
             If oup_master < oup_1 Then
             dia = 0
             
-                For Each celdita In Sheets(ws).Range("b3:b300")
+                For Each celdita In Sheets(ws).Range("b3:B350")
                 
                     If celdita = grp_n_familia Then
                         columna = celdita.Column
@@ -160,7 +160,7 @@ End If
 
             While dia <= 60
             
-                grupo.Offset(8, 2 + dia).Value = grupo.Offset(8, 2 + dia).Value + WorksheetFunction.Max(Cells(fila, columna).Offset(7, 2 + dia).Value, 0)
+                grupo.Offset(8, 2 + dia).Value = grupo.Offset(8, 2 + dia).Value + Cells(fila, columna).Offset(7, 2 + dia).Value
             
                 dia = dia + 1
                                 
@@ -178,9 +178,11 @@ End If
 'Bucle que se aplicará si el grupo cubierto es igual al grupo ofertado:
 'Únicamente en caso de ser la primera vez que se cubre este bucle, se calculará esta celda. Este valor será igual al stock del grupo ofrecido.
             
-            If oup_master = oup_1 And IsEmpty(grupo.Offset(8, 2)) = True And oup_master <> 0 And oup_1 <> 0 Then
+            If oup_master = oup_1 And oup_master <> 0 And oup_1 <> 0 Then
             
                 dia = 0
+                            
+                 If IsEmpty(grupo.Offset(8, 2)) = True Then
                             
                     While dia <= 60
                     
@@ -188,7 +190,18 @@ End If
                         dia = dia + 1
                         
                     Wend
- 
+                    
+                 Else
+                    
+                     While dia <= 60
+                    
+                        grupo.Offset(8, 2 + dia).Value = WorksheetFunction.Min(grupo.Offset(7, 2 + dia).Value, grupo.Offset(7, 2 + dia).Value + grupo.Offset(8, 2 + dia).Value)
+                        dia = dia + 1
+                        
+                     Wend
+                                        
+                    
+                 End If
                 
                 dia = 0
                 oup_master = 0
@@ -204,7 +217,7 @@ End If
             
                 dia = 0
                     
-                    For Each celdita In Range("b3:b300")
+                    For Each celdita In Range("b3:B350")
                     
                         If celdita = grp_n_familia Then
                         
@@ -216,30 +229,52 @@ End If
                 
                     Next celdita
                     
-                    
-'Si es el primer bucle, el valor de la celda será igual al valor del stock del grupo ofrecido + el valor mínimo entre 0 y el stock del grupo cubierto
+'Si es el primer bucle, el parámetro será igual al stock del grupo cubierto.
 
-                    If IsEmpty(grupo.Offset(8, 2)) = True Then
+                If IsEmpty(grupo.Offset(8, 2)) = True Then
+                            
+                    While dia <= 60
+                    
+                        grupo.Offset(8, 2 + dia).Value = Cells(fila, columna).Offset(7, 2 + dia).Value
+                        dia = dia + 1
                         
-                        While dia <= 60
+                    Wend
+                    
+
+'Si no es el primer bucle, aplicaremos unas condiciones en base a si los valores son positivos o negativos,
+
+                 Else
+                     
+                    While dia <= 60
+                     
+'Si el valor actual para la suma de grupos cubiertos es positivo, y el nuevo parámetro es negativo, el nuevo valor prevalece.
+
+                        If grupo.Offset(8, 2 + dia).Value >= 0 Then
                         
-                            grupo.Offset(8, 2 + dia).Value = grupo.Offset(7, 2 + dia).Value + WorksheetFunction.Min(Cells(fila, columna).Offset(7, 2 + dia).Value, 0)
+                            If Cells(fila, columna).Offset(7, 2 + dia).Value < 0 Then
+                        
+                                grupo.Offset(8, 2 + dia).Value = Cells(fila, columna).Offset(7, 2 + dia).Value
+                                
+                                dia = dia + 1
+                                                           
+                            End If
+
+'Si el valor actual para la suma de grupos cubiertos es negativo, el nuevo valor se sumará en todos los casos.
+
+                        Else
+                                                   
+                            grupo.Offset(8, 2 + dia).Value = Cells(fila, columna).Offset(7, 2 + dia).Value + grupo.Offset(8, 2 + dia).Value
+                                                    
                             dia = dia + 1
                             
-                        Wend
+                        End If
                         
-'Para otros bucles distintos al primero, el valor de la celda será igual al valor previo de la celda + valor mínimo entre 0 y el stock del grupo cubierto
-                    
-                    Else
-                    
-                        While dia <= 60
+                    dia = dia + 1
                         
-                            grupo.Offset(8, 2 + dia).Value = grupo.Offset(8, 2 + dia).Value + WorksheetFunction.Min(Cells(fila, columna).Offset(7, 2 + dia).Value, 0)
-                            dia = dia + 1
-                            
-                        Wend
-                        
-                    End If
+                    Wend
+                                                
+                End If
+                     
                     
                 dia = 0
                 oup_master = 0
