@@ -131,9 +131,6 @@ GoTo siguiente_grupo_cubierto
 End If
 
 
-
-'Next celdita
-
 'Aquí es donde tendré que incorporar la parte en que aplica un bucle a 60 días en el CDV en el que busca el valor del grupo ofertado,
 'lo compara con el grupo cubierto en base al orden upgrade de cada uno, y tiene en cuenta el margen de seguridad
 'Cada vez que cambie de valor por añadir más grupos en la familia, simplemente actualiza el valor resultante
@@ -160,7 +157,7 @@ End If
 
             While dia <= 60
             
-                grupo.Offset(8, 2 + dia).Value = Worksheet.Function.Max(grupo.Offset(8, 2 + dia).Value + Cells(fila, columna).Offset(7, 2 + dia).Value, grupo.Offset(7, 2 + dia).Value)
+                grupo.Offset(8, 2 + dia).Value = grupo.Offset(8, 2 + dia).Value + Cells(fila, columna).Offset(7, 2 + dia).Value
             
                 dia = dia + 1
                                 
