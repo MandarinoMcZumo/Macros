@@ -156,11 +156,11 @@ End If
 
               
 'En caso de existir esta configuración de parámetros, nunca se dará en el primer bucle. Por ello, el valor calculado será:
-'El valor previo de la celda + valor máximo entre el stock del grupo superior y 0
+'El máximo entre el valor stock del grupo ofrecido y la suma del valor de los cubiertos + el grupo ofrecido
 
             While dia <= 60
             
-                grupo.Offset(8, 2 + dia).Value = grupo.Offset(8, 2 + dia).Value + Cells(fila, columna).Offset(7, 2 + dia).Value
+                grupo.Offset(8, 2 + dia).Value = Worksheet.Function.Max(grupo.Offset(8, 2 + dia).Value + Cells(fila, columna).Offset(7, 2 + dia).Value, grupo.Offset(7, 2 + dia).Value)
             
                 dia = dia + 1
                                 
