@@ -32,19 +32,43 @@ For Each grupo In Workbooks(wb).Sheets(ws).Range("B1:B387")
 'Hay que añadir la creación de la línea en la que se determinará si ofrezco o no, y cuánto
 
 grupo.Offset(8, 0).EntireRow.Insert
+
+With grupo.Offset(8, 0).EntireRow
+    
+    .Interior.Color = RGB(209, 215, 50)
+    .Font.Bold = True
+    .Font.Color = vbBlack
+    
+    With .Borders(xlEdgeTop)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+        
+    With .Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+        
+End With
+    
+
 With grupo.Offset(8, 1)
-    .Interior.Color = RGB(48, 84, 150)
-    .Font.Color = vbWhite
-    .Font.Bold = vbWhite
+    .Interior.Color = RGB(195, 230, 227)
+    .Font.Color = vbBlack
+    .Font.Bold = True
 End With
 
 With grupo.Offset(8, 0)
-    .Interior.Color = RGB(255, 121, 121)
+    .Interior.Color = RGB(1, 187, 176)
     .Font.Color = vbWhite
+    .Font.Bold = True
 End With
    
-
-    
+   
 'imprimo el grupo que vamos a tratar
     Debug.Print " "
     Debug.Print "Grupo ofertado: " & grupo.Value
