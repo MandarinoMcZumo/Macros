@@ -336,6 +336,8 @@ Next grupo
 
 Workbooks(wb).Activate
 
+Range("C:C").EntireColumn.AutoFit
+
 Application.ScreenUpdating = True
 
 End Sub
