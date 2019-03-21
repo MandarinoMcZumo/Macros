@@ -25,7 +25,7 @@ Debug.Print "Nombre de la oficina: " & office_name
 
 'Si la celda coincide para uno de los valores correspondientes a un grupo entonces:
 
-For Each grupo In Workbooks(wb).Sheets(ws).Range("B1:B350")
+For Each grupo In Workbooks(wb).Sheets(ws).Range("B1:B387")
 
     If grupo = "4A" Or grupo = "AA" Or grupo = "BB" Or grupo = "CC" Or grupo = "D" Or grupo = "N" Or grupo = "R" Or grupo = "T" Or grupo = "V" Or grupo = "C1" Or grupo = "VV" Or grupo = "E" Or grupo = "DD" Or grupo = "F" Or grupo = "FF" Or grupo = "S" Or grupo = "L" Or grupo = "LK" Or grupo = "RK" Or grupo = "P" Or grupo = "PP" Or grupo = "J" Or grupo = "JJ" Or grupo = "K" Or grupo = "I" Or grupo = "G" Or grupo = "4A" Then
     
@@ -121,7 +121,7 @@ Workbooks(wb).Sheets(office_name).Activate
 
 
 
-Set pikasa = Range("B3:B350").Find(grp_n_familia, , , xlWhole, , , True)
+Set pikasa = Range("B3:B387").Find(grp_n_familia, , , xlWhole, , , True)
 
 If pikasa Is Nothing Then
 
@@ -130,6 +130,9 @@ GoTo siguiente_grupo_cubierto
 
 End If
 
+
+
+'Next celdita
 
 'Aquí es donde tendré que incorporar la parte en que aplica un bucle a 60 días en el CDV en el que busca el valor del grupo ofertado,
 'lo compara con el grupo cubierto en base al orden upgrade de cada uno, y tiene en cuenta el margen de seguridad
@@ -141,7 +144,7 @@ End If
             If oup_master < oup_1 Then
             dia = 0
             
-                For Each celdita In Sheets(ws).Range("b3:B350")
+                For Each celdita In Sheets(ws).Range("b3:B387")
                 
                     If celdita = grp_n_familia Then
                         columna = celdita.Column
@@ -214,7 +217,7 @@ End If
             
                 dia = 0
                     
-                    For Each celdita In Range("b3:B350")
+                    For Each celdita In Range("b3:B387")
                     
                         If celdita = grp_n_familia Then
                         
@@ -253,8 +256,16 @@ End If
                                 grupo.Offset(8, 2 + dia).Value = Cells(fila, columna).Offset(7, 2 + dia).Value
                                 
                                 dia = dia + 1
+                                
+                            Else
+                            
+                                'grupo.Offset(8, 2 + dia).Value = grupo.Offset(8, 2 + dia).Value
+                                
+                                dia = dia + 1
+                            
                                                            
                             End If
+
 
 'Si el valor actual para la suma de grupos cubiertos es negativo, el nuevo valor se sumará en todos los casos.
 
@@ -266,7 +277,6 @@ End If
                             
                         End If
                         
-                    dia = dia + 1
                         
                     Wend
                                                 
