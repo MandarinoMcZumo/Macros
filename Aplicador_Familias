@@ -330,6 +330,15 @@ etiqueta:
 
 Next grupo
 
+For Each pikasa In Range("C3:C387")
+
+    If pikasa.Interior.Color = RGB(195, 230, 227) And IsEmpty(pikasa.Value) = True Then
+    
+        pikasa.EntireRow.Delete
+    
+    End If
+
+Next pikasa
 
 
 Workbooks(wb).Activate
