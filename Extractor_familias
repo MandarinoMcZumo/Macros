@@ -8,17 +8,23 @@ Dim looper As Integer
 
 Application.ScreenUpdating = False
 
+If ActiveWorkbook.Name <> "SARG2.xlsx" Then
+
+GoTo cagarruta
+
+End If
+
     Dim xWs As Worksheet
     Application.DisplayAlerts = False
     For Each xWs In Application.ActiveWorkbook.Worksheets
-        If xWs.Name <> "SARG2" Then
+        If xWs.Name <> "SARG2" And xWs.Name <> "OUP" Then
             xWs.Delete
         End If
     Next
     Application.DisplayAlerts = True
 
 
-For Each office In Range("D1:DS1")
+For Each office In Range("D1:DP1")
 
     office_name = office
 
@@ -55,7 +61,7 @@ For Each office In Range("D1:DS1")
             
     Worksheets("SARG2").Activate
 
-    For Each value_seeker In Range(Cells(3, office.Column), Cells(200, office.Column))
+    For Each value_seeker In Range(Cells(3, office.Column), Cells(230, office.Column))
         
            If IsEmpty(value_seeker) = False Then
             
@@ -116,6 +122,8 @@ Next
    
 
 Worksheets("SARG2").Activate
+
+cagarruta:
       
        
 Application.ScreenUpdating = True
@@ -123,7 +131,7 @@ Application.ScreenUpdating = True
   
 End Sub
 
-Private Sub conversor_parametros()
+Sub conversor_parametros()
 
 On Error Resume Next
 
@@ -131,7 +139,7 @@ On Error Resume Next
   Dim mycell As Range
   Dim vuelta As Integer, vuelta2 As Integer, num As Integer, stock_seguridad As String
   Dim repeater As Integer, cuenta As Integer, cuenta2 As Integer
-Range("F2:J50").Clear
+Range("F2:H300").Clear
 
 With Range("f1")
     .Value = "Ofrecidos"
