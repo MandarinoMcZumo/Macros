@@ -39,19 +39,19 @@ With grupo.Offset(8, 0).EntireRow
     .Font.Bold = True
     .Font.Color = vbBlack
     
-    With .Borders(xlEdgeTop)
-        .LineStyle = xlContinuous
-        .ColorIndex = 0
-        .TintAndShade = 0
-        .Weight = xlThin
-    End With
-        
-    With .Borders(xlEdgeBottom)
-        .LineStyle = xlContinuous
-        .ColorIndex = 0
-        .TintAndShade = 0
-        .Weight = xlThin
-    End With
+'    With .Borders(xlEdgeTop)
+'        .LineStyle = xlContinuous
+'        .ColorIndex = 0
+'        .TintAndShade = 0
+'        .Weight = xlThin
+'    End With
+'
+'    With .Borders(xlEdgeBottom)
+'        .LineStyle = xlContinuous
+'        .ColorIndex = 0
+'        .TintAndShade = 0
+'        .Weight = xlThin
+'    End With
         
 End With
     
@@ -330,12 +330,49 @@ etiqueta:
 
 Next grupo
 
+For Each pikasa In Range("B3:B387")
+
+    If pikasa.Value = "Disp. Familia" Then
+    
+        pikasa.EntireRow.Delete
+    
+    End If
+
+Next pikasa
+
+
+
 For Each pikasa In Range("C3:C387")
 
     If pikasa.Interior.Color = RGB(195, 230, 227) And IsEmpty(pikasa.Value) = True Then
     
         pikasa.EntireRow.Delete
     
+    End If
+
+Next pikasa
+
+For Each pikasa In Range("C3:C387")
+
+    If pikasa.Interior.Color = RGB(195, 230, 227) Then
+    
+        With pikasa.EntireRow.Borders(xlEdgeBottom)
+        
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+        
+        End With
+        
+         With pikasa.EntireRow.Borders(xlEdgeTop)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+        End With
+        
+        
     End If
 
 Next pikasa
@@ -348,3 +385,4 @@ Range("C:C").EntireColumn.AutoFit
 Application.ScreenUpdating = True
 
 End Sub
+
