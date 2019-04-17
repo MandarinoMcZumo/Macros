@@ -1,0 +1,194 @@
+Sub Formatoguapo()
+
+Dim ceros As Range
+
+Application.ScreenUpdating = False
+
+Cells.FormatConditions.Delete
+
+Cells.Font.Name = "Tahoma"
+Cells.Font.Size = 8
+
+Rows.RowHeight = 18
+Columns.ColumnWidth = 8.67
+Range("A1").ColumnWidth = 11.78
+
+'Resumen KPI's
+
+With Range("A2:A10")
+
+.Interior.Color = RGB(245, 245, 245)
+.HorizontalAlignment = xlLeft
+.WrapText = True
+
+End With
+
+With Range("A1:B1")
+
+.Interior.Color = RGB(245, 245, 245)
+.HorizontalAlignment = xlCenter
+.VerticalAlignment = xlCenter
+.Font.Bold = True
+
+End With
+
+
+
+'Detalle por días
+
+
+
+'Columna con nombre KPI's
+
+With Range("A13:A36")
+
+.Interior.Color = RGB(245, 245, 245)
+.HorizontalAlignment = xlLeft
+.WrapText = True
+
+End With
+
+'Fecha
+
+With Range("A13:DQ13")
+
+.Interior.Color = RGB(245, 245, 245)
+.HorizontalAlignment = xlCenter
+.VerticalAlignment = xlCenter
+.Font.Bold = True
+.WrapText = True
+.RowHeight = 22
+
+End With
+
+'Commercial Available
+
+With Range("B24:DQ24")
+
+.Interior.Color = RGB(226, 239, 218)
+
+End With
+
+'On Rent
+
+With Range("B27:DQ27")
+
+.Interior.Color = RGB(226, 239, 218)
+
+End With
+
+'% Occupation
+
+With Range("B31:DQ31")
+
+.Interior.Color = RGB(226, 239, 218)
+.NumberFormat = "0%"
+
+
+End With
+
+'% Occupation LY
+
+With Range("B32:DQ32")
+
+.NumberFormat = "0%"
+
+End With
+
+
+
+'Operating Fleet
+
+With Range("B33:DQ33")
+
+.Interior.Color = RGB(226, 239, 218)
+
+End With
+
+'% Commercial Utilization
+
+With Range("B35:DQ35")
+
+.Interior.Color = RGB(226, 239, 218)
+.NumberFormat = "0%"
+
+End With
+
+'% Commercial Utilization LY
+
+With Range("B36:DQ36")
+
+.NumberFormat = "0%"
+
+End With
+
+
+'Matriz de Valores
+
+With Range("B14:DQ36")
+
+.VerticalAlignment = xlCenter
+
+End With
+
+
+'Elimina valor 0
+
+For Each ceros In Range("B14:DQ18")
+
+If ceros.Value = 0 Then
+
+ceros.Value = ""
+
+End If
+
+Next ceros
+
+'Aplica negritas
+
+For Each ceros In Range("B14:DQ20")
+
+If ceros.Offset(38, 0).Value = 2 Then
+
+ceros.Font.Bold = True
+
+End If
+
+Next ceros
+
+'Resalta 0 y negativos
+
+For Each ceros In Range("B24:DQ24")
+
+If ceros.Value <= 0 Then
+
+ceros.Font.Bold = True
+ceros.Font.Color = vbRed
+
+End If
+
+Next ceros
+
+'Color sábados
+
+
+
+ For Each ceros In Range("A13:DQ13")
+ 
+ If ceros.Value Like "Sat" & "*" Then
+ 
+ Range(ceros.Offset(1, 0), ceros.Offset(23, 0)).Interior.Color = RGB(226, 239, 218)
+ 
+ End If
+ 
+ Next ceros
+ 
+ 
+'Elimina datos Qliksense
+
+Range("A51:DQ74").Delete
+
+Application.ScreenUpdating = True
+
+
+End Sub
