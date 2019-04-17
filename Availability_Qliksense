@@ -1,8 +1,26 @@
+Sub Availability_Qliksense()
+
+On Error GoTo final
+
+    Dim xSh As Worksheet
+    Application.ScreenUpdating = False
+    For Each xSh In Worksheets
+        xSh.Select
+        Call Formatoguapo
+    Next
+    
+    Application.ScreenUpdating = True
+    
+final:
+
+End Sub
+
+
 Sub Formatoguapo()
 
 Dim ceros As Range
 
-Application.ScreenUpdating = False
+'Application.ScreenUpdating = False
 
 Cells.FormatConditions.Delete
 
@@ -188,7 +206,7 @@ Next ceros
 
 Range("A51:DQ74").Delete
 
-Application.ScreenUpdating = True
+'Application.ScreenUpdating = True
 
 
 End Sub
