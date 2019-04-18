@@ -166,7 +166,7 @@ Next ceros
 
 For Each ceros In Range("B14:DQ20")
 
-If ceros.Offset(38, 0).Value = 2 Then
+If ceros.Offset(38, 0).Value = 2 Or ceros.Offset(38, 0).Value = 3 Then
 
 ceros.Font.Bold = True
 
