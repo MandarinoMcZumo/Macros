@@ -2,7 +2,7 @@ Private Sub Workbook_Open()
 
 On Error Resume Next
 
-Dim ceros As Range, formato_incorrecto As Integer
+Dim ceros As Range, formato_incorrecto As Integer, columna as integer, fila as integer, dias as integer
 Dim xSh As Worksheet
         
 
@@ -205,7 +205,7 @@ xSh.Select
 
 Next xSh
 
-Sheets("Colores Condicionales").Delete
+
         
 
 'Selecciona la hoja del país
@@ -215,10 +215,53 @@ For Each xSh In Worksheets
         If xSh.Name = "CROATIA" Or xSh.Name = "SPAIN" Or xSh.Name = "FRANCE" Or xSh.Name = "TURKEY" Or xSh.Name = "GREECE" Or xSh.Name = "UNITED KINGDOM" Or xSh.Name = "ITALY" Or xSh.Name = "PORTUGAL" Then
         
             xSh.Select
+			
         
         End If
     
 Next xSh
+
+
+'Aplicación de negritas en la hoja país
+
+dias = 0
+
+        For Each ceros In Range("B20:DQ20")
+        
+        ' Debug.Print "Valor pick ups " & ceros
+        ' Debug.Print "Valor control " & Sheets("Colores Condicionales").Cells(2 + dias, 7).Value
+        ' Debug.Print "Nº dia " & dias
+               
+        If Sheets("Colores Condicionales").Cells(7, 2 + dias) = 2 Or Sheets("Colores Condicionales").Cells(7, 2 + dias) = 3 Then
+        
+        ceros.Font.Bold = True
+        
+        End If
+        
+        dias = dias + 1
+
+        Next ceros
+
+dias = 0
+
+        For Each ceros In Range("B19:DQ19")
+
+        ' Debug.Print "Valor pick ups " & ceros
+        ' Debug.Print "Valor control " & Sheets("Colores Condicionales").Cells(2 + dias, 6).Value
+        ' Debug.Print "Nº dia " & dias
+                       
+        If Sheets("Colores Condicionales").Cells(6, 2 + dias) = 2 Or Sheets("Colores Condicionales").Cells(6, 2 + dias) = 3 Then
+        
+        ceros.Font.Bold = True
+        
+        End If
+        
+        dias = dias + 1
+
+        Next ceros
+
+
+Sheets("Colores Condicionales").Delete
 
 End If
 
