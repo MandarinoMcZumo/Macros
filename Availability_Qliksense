@@ -1,22 +1,77 @@
 Sub Availability_Qliksense()
 
-On Error GoTo final
+On Error Resume Next  'GoTo final1
+Application.DisplayAlerts = False
 
-    Dim xSh As Worksheet
+    Dim xSh As Worksheet, xSh1 As Worksheet, dias As Integer
     Application.ScreenUpdating = False
     For Each xSh In Worksheets
         xSh.Select
-        Call Formatoguapo
+        
+        Call Formatoguapo_Qliksense
+ 
     Next
     
+    For Each xSh1 In Worksheets
+        
+        If xSh1.Name = "CROATIA" Or xSh1.Name = "SPAIN" Or xSh1.Name = "FRANCE" Or xSh1.Name = "TURKEY" Or xSh1.Name = "GREECE" Or xSh1.Name = "UNITED KINGDOM" Or xSh1.Name = "ITALY" Or xSh1.Name = "PORTUGAL" Then
+            Debug.Print xSh1.Name
+            xSh1.Select
+            Debug.Print Activeworksheet.Name
+            
+        End If
+        
+    Next
+    
+    'Aplicación de negritas en la hoja país
+
+dias = 0
+
+        For Each ceros In Range("B20:DQ20")
+        
+        ' Debug.Print "Valor pick ups " & ceros
+        ' Debug.Print "Valor control " & Sheets("Colores Condicionales").Cells(2 + dias, 7).Value
+        ' Debug.Print "Nº dia " & dias
+               
+        If Sheets("Colores Condicionales").Cells(7, 2 + dias) = 2 Or Sheets("Colores Condicionales").Cells(7, 2 + dias) = 3 Then
+        
+        ceros.Font.Bold = True
+        
+        End If
+        
+        dias = dias + 1
+
+        Next ceros
+
+dias = 0
+
+        For Each ceros In Range("B19:DQ19")
+
+        ' Debug.Print "Valor pick ups " & ceros
+        ' Debug.Print "Valor control " & Sheets("Colores Condicionales").Cells(2 + dias, 6).Value
+        ' Debug.Print "Nº dia " & dias
+                       
+        If Sheets("Colores Condicionales").Cells(6, 2 + dias) = 2 Or Sheets("Colores Condicionales").Cells(6, 2 + dias) = 3 Then
+        
+        ceros.Font.Bold = True
+        
+        End If
+        
+        dias = dias + 1
+
+        Next ceros
+
+
+Sheets("Colores Condicionales").Delete
+    
+    Application.DisplayAlerts = True
     Application.ScreenUpdating = True
     
-final:
+final1:
 
 End Sub
 
-
-Sub Formatoguapo()
+Private Sub Formatoguapo_Qliksense()
 
 Dim ceros As Range
 
@@ -152,15 +207,15 @@ End With
 
 'Elimina valor 0
 
-For Each ceros In Range("B14:DQ18")
-
-If ceros.Value = 0 Then
-
-ceros.Value = ""
-
-End If
-
-Next ceros
+'''''For Each ceros In Range("B14:DQ18")
+'''''
+'''''If ceros.Value = 0 Then
+'''''
+'''''ceros.Value = ""
+'''''
+'''''End If
+'''''
+'''''Next ceros
 
 'Aplica negritas
 
@@ -188,7 +243,6 @@ End If
 Next ceros
 
 'Color sábados
-
 
 
  For Each ceros In Range("A13:DQ13")
