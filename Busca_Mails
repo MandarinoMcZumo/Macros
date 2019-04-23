@@ -1,0 +1,41 @@
+Sub Busca_mails()
+
+Dim wb1 As String, wb2 As String
+
+Application.DisplayAlerts = False
+
+wb1 = ActiveWorkbook.Name
+
+wb2 = "Contactos_Global.xlsx"
+
+Range("H2").Select
+
+Range(Selection, Selection.End(xlDown)).Select
+
+
+Selection.Copy
+
+Workbooks(wb2).Sheets("Filtro").Activate
+
+Range("A2").PasteSpecial (xlPasteValues)
+
+
+    Sheets("Filtro").Range("Filter[Office Location]").RemoveDuplicates Columns:=Array(1), _
+        Header:=xlYes
+
+Sheets("Contactos_Global").Activate
+
+    Range("Global_Contacts[#All]").AdvancedFilter Action:=xlFilterInPlace, _
+        CriteriaRange:=Sheets("Filtro").Range("Filter[[#All],[Office Location]]"), _
+        Unique:=False
+
+
+Worksheets("Filtro").Activate
+Range("A2").Select
+Range(Selection, Selection.End(xlDown)).Select
+Selection.Clear
+
+Sheets("Contactos_Global").Activate
+    
+End Sub
+
