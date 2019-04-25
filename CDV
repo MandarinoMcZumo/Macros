@@ -120,7 +120,7 @@ Range("B:B").UnMerge
 
 For Each grupo In Range("B1:B300")
 
-    If grupo = "VV" Or grupo = "V" Or grupo = "G" Or grupo = "P" Or grupo = "PP" Or grupo = "J" Or grupo = "JJ" Or grupo = "I" Or grupo = "K" Then      'Comprueba si la celda corresponde a un grupo especial
+    If grupo = "VV" Or grupo = "V" Or grupo = "G" Or grupo = "P" Or grupo = "PP" Or grupo = "J" Or grupo = "JJ" Or grupo = "I" Or grupo = "K" Or grupo = "DD" Or grupo = "C1" Or grupo = "E" Then      'Comprueba si la celda corresponde a un grupo especial
         
         dia = 0
         Var = 0
