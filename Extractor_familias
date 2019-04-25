@@ -1,8 +1,10 @@
 Sub Extraer_familias()
 
-Dim office As Range, value_seeker As Range
-Dim office_name As String
-Dim looper As Integer
+
+
+Dim office As Range, value_seeker As Range, value_seeker_info As Range, office_info As Range
+Dim office_name As String, office_name_info As String
+Dim looper As Integer, looper_info As Integer
 
 
 
@@ -17,14 +19,14 @@ End If
     Dim xWs As Worksheet
     Application.DisplayAlerts = False
     For Each xWs In Application.ActiveWorkbook.Worksheets
-        If xWs.Name <> "SARG2" And xWs.Name <> "OUP" Then
+        If xWs.Name <> "SARG2" And xWs.Name <> "OUP" And xWs.Name <> "InfoOficinas" Then
             xWs.Delete
         End If
     Next
     Application.DisplayAlerts = True
 
 
-For Each office In Range("D1:DP1")
+For Each office In Range("D1:DQ1")
 
     office_name = office
 
@@ -99,26 +101,69 @@ For Each office In Range("D1:DP1")
             looper = looper + 1
             
            End If
+           
         Worksheets(office_name).Columns("A:E").AutoFit
+        
     Next value_seeker
 
-   
-   looper = 0
+looper = 0
 
-Next office
+    Next office
+
+
+Worksheets("InfoOficinas").Activate
+
+    For Each office_info In Range("B1:CZ1")
+
+    office_name_info = office_info.Value
+
+    For Each value_seeker_info In Range(Cells(2, office_info.Column), Cells(30, office_info.Column))
+        
+           If IsEmpty(value_seeker_info) = False Then
+            
+                               
+                With Worksheets(office_name_info).Cells(2 + looper_info, 16)
+                    .Value = Worksheets("InfoOficinas").Cells(value_seeker_info.Row, 1).Value
+                    .Interior.Color = RGB(164, 31, 61)
+                    .Font.Bold = True
+                    .Font.Color = vbWhite
+                    
+                
+                End With
+            
+                
+                With Worksheets(office_name_info).Cells(2 + looper_info, 17)
+                    .Value = value_seeker_info.Value
+                    .Interior.Color = RGB(255, 202, 214)
+                    
+                    
+                End With
+            
+            looper_info = looper_info + 1
+            
+           End If
+        Worksheets(office_name_info).Columns("A:P").AutoFit
+        Worksheets(office_name_info).Range("Q2").ColumnWidth = 10
+        
+    Next value_seeker_info
+
+   
+   looper_info = 0
+
+    Next office_info
        
 Dim xSh As Worksheet
   
     For Each xSh In Worksheets
     
-    If xSh.Name <> "SARG2" Then
+    If xSh.Name <> "SARG2" And xSh.Name <> "OUP" And xSh.Name <> "InfoOficinas" Then
     
         xSh.Select
         Call conversor_parametros
         
     End If
         
-Next
+    Next xSh
    
 
 Worksheets("SARG2").Activate
@@ -129,90 +174,4 @@ cagarruta:
 Application.ScreenUpdating = True
 
   
-End Sub
-
-Sub conversor_parametros()
-
-On Error Resume Next
-
-  Dim ofrecidos() As String, cubiertos() As String
-  Dim mycell As Range
-  Dim vuelta As Integer, vuelta2 As Integer, num As Integer, stock_seguridad As String
-  Dim repeater As Integer, cuenta As Integer, cuenta2 As Integer
-Range("F2:H300").Clear
-
-With Range("f1")
-    .Value = "Ofrecidos"
-    .Interior.Color = vbBlue
-    .Font.Color = vbWhite
-    .Font.Bold = True
-End With
-
-With Range("g1")
-    .Value = "Cubiertos"
-    .Interior.Color = vbBlue
-    .Font.Color = vbWhite
-    .Font.Bold = True
-End With
-
-With Range("H1")
-    .Value = "Parámetro"
-    .Interior.Color = vbBlue
-    .Font.Color = vbWhite
-    .Font.Bold = True
-End With
-
-
-For Each mycell In Range("A2:A30")
-  
-  If IsEmpty(mycell) = False Then
-        ofrecidos = Split(mycell.Value, " ")    'Selecciono una celda con información
-        cubiertos = Split(mycell.Offset(0, 1), " ")
-        stock_seguridad = mycell.Offset(0, 3)
-                
-        num = 0
-
-        Do Until num > UBound(ofrecidos)                'bucle de los grupos ofrecidos
-            
-            
-                        
-            Do Until cuenta = UBound(cubiertos) + 1
-            
-            Cells(2 + vuelta2, 6).Value = ofrecidos(num)
-            Cells(2 + vuelta2, 8).Value = stock_seguridad
-            vuelta2 = vuelta2 + 1
-            cuenta = cuenta + 1
-                
-            Debug.Print "primer bucle"
-            
-            Loop
-            
-            num = num + 1
-            cuenta = 0
-        
-        
-        Loop
-      
-        cuenta2 = 0
-        
-
-        Do Until cuenta2 = UBound(ofrecidos) + 1            'bucle de los grupos cubiertos
-
-            Cells(2 + vuelta, 7).Resize(UBound(cubiertos) + 1) = Application.Transpose(cubiertos)
-
-            vuelta = UBound(cubiertos) + vuelta + 1
-
-            cuenta2 = cuenta2 + 1
-
-        Loop
-    
-    
-    
-    
-    End If
-    
-Next mycell
-
-
-
 End Sub
