@@ -9,7 +9,7 @@ Sub CDV()
     Application.ScreenUpdating = True
 End Sub
 
-Sub CDV_1()
+Private Sub CDV_1()
 '
 ' CDV_1 Macro
 '
@@ -109,7 +109,7 @@ Sub CDV_1()
     Range("A1").Select
 End Sub
 
-Sub CDV_Grupos_Especiales_Check()
+Private Sub CDV_Grupos_Especiales_Check()
 
 
 Dim grupo As Range, dia As Integer, Var As Integer
