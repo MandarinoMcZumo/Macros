@@ -1,0 +1,17 @@
+Sub Filtro_SxH()
+
+Application.ScreenUpdating = False
+
+Sheets("Master").Activate
+
+    Application.CutCopyMode = False
+    Range("Tabla_Consulta_desde_SIGGERSERVER[#All]").AdvancedFilter Action:= _
+        xlFilterCopy, CriteriaRange:=Sheets("FILTRO").Range("Filter[#All]"), _
+        CopyToRange:=Range("Tabla2[#Headers]"), Unique:=False
+
+Sheets("Resumen").Activate
+
+Application.ScreenUpdating = True
+
+
+End Sub
