@@ -10,6 +10,7 @@ Sheets("Master").Activate
         CopyToRange:=Range("Tabla2[#Headers]"), Unique:=False
 
 Sheets("Resumen").Activate
+ActiveSheet.PivotTables("TablaDinámica1").PivotCache.Refresh
 
 Application.ScreenUpdating = True
 
