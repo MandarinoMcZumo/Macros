@@ -1,0 +1,31 @@
+Sub Tablet_Use()
+
+Dim pikachu As Range
+
+Application.ScreenUpdating = False
+
+    For Each pikachu In Range("B:B")
+    
+    If IsEmpty(pikachu) = False Then
+    
+        If pikachu.Value = "% Utilización Tablet" Then
+        
+            Range(pikachu.Offset(0, 1), pikachu.Offset(0, 8)).Select
+            Selection.NumberFormat = "0.00%"
+            
+            pikachu.Offset(0, 8) = WorksheetFunction.Average(pikachu.Offset(0, 1), pikachu.Offset(0, 2), pikachu.Offset(0, 3), pikachu.Offset(0, 4), pikachu.Offset(0, 5), pikachu.Offset(0, 6), pikachu.Offset(0, 7))
+        
+        End If
+    
+    Else: GoTo final_macro
+    
+    End If
+    
+    Next pikachu
+
+Application.ScreenUpdating = True
+    
+final_macro:
+
+
+End Sub
