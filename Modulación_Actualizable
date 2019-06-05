@@ -12,7 +12,7 @@ ActiveWorkbook.RefreshAll
 'con el código de la oficina, de lo contrario saltará un error
 
 ActiveWorkbook.SaveAs Filename:="\\dataserver\FLOTA\DISPONIBILIDAD\Histórico Modulación\" & final_file & "\" _
-    & final_file & "." & Format(Now(), "YYYY.MM.DD-HH") & ".xlsx" _
+    & final_file & "." & Format(Now(), "YYYY.MM.DD-HH") & "h.xlsx" _
     , FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
 
 
