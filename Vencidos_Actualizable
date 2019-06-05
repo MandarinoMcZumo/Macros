@@ -1,0 +1,17 @@
+Sub Vencidos()
+
+    ActiveWorkbook.RefreshAll
+    
+    Cells.Select
+    Selection.Rows.AutoFit
+    Selection.Columns.AutoFit
+    
+    
+    Cells(1, 1).Select
+    ActiveWorkbook.SaveAs Filename:="\\dataserver\FLOTA\Vencidos\Vencidos2019\Vencidos." _
+    & Format(Now(), "YYYY.MM.DD") & ".xlsx" _
+    , FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
+    
+    
+End Sub
+
