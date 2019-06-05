@@ -1,0 +1,19 @@
+Sub MegaModulation()
+
+Dim wb_name As String, office_name() As String, final_file As String
+
+wb_name = ActiveWorkbook.Name
+office_name() = Split(wb_name, ".")
+final_file = office_name(0)
+
+ActiveWorkbook.RefreshAll
+
+'Para que el código funcione, debe existir en la ruta FLOTA\DISPONIBILIDAD\Histórico Modulación\ una carpeta
+'con el código de la oficina, de lo contrario saltará un error
+
+ActiveWorkbook.SaveAs Filename:="\\dataserver\FLOTA\DISPONIBILIDAD\Histórico Modulación\" & final_file & "\" _
+    & final_file & "." & Format(Now(), "YYYY.MM.DD-HH") & ".xlsx" _
+    , FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
+
+
+End Sub
