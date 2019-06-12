@@ -1,0 +1,126 @@
+Sub Pizzarra()
+
+
+Dim office As Range, value_seeker As Range, value_seeker_info As Range, office_info As Range
+Dim office_name As String, office_name_info As String
+Dim looper As Integer, looper_info As Integer
+
+
+
+Application.ScreenUpdating = False
+
+Dim xSh As Worksheet, sheet_check As Boolean, xSh0 As String
+
+sheet_check = False
+
+xSh0 = ActiveSheet.Name
+
+
+For Each xSh In Worksheets
+    If xSh.Name = "Lista" Then
+        sheet_check = True
+    End If
+Next xSh
+
+If sheet_check = False Then
+    Sheets.Add.Name = "Lista"
+End If
+
+
+
+For Each office In Worksheets(xSh0).Range("H1:M1")
+
+    office_name = office.Value
+
+              
+    Worksheets(xSh0).Activate
+
+    For Each value_seeker In Range(Cells(2, office.Column), Cells(40, office.Column))
+        
+           If IsEmpty(value_seeker) = False Then
+            
+                With Worksheets("Lista").Cells(2 + looper, 1)
+                    .Value = office_name
+                    .Interior.Color = RGB(235, 241, 221)
+                    .Font.Bold = True
+                
+                End With
+
+
+                With Worksheets("Lista").Cells(2 + looper, 2)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 1).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                                   
+                End With
+                
+                
+                With Worksheets("Lista").Cells(2 + looper, 3)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 2).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                                  
+                End With
+                
+                
+                With Worksheets("Lista").Cells(2 + looper, 4)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 3).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+
+
+                With Worksheets("Lista").Cells(2 + looper, 5)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 4).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+
+
+                With Worksheets("Lista").Cells(2 + looper, 6)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 5).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+
+
+                With Worksheets("Lista").Cells(2 + looper, 7)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 6).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+
+
+                With Worksheets("Lista").Cells(2 + looper, 8)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 7).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+
+                
+                With Worksheets("Lista").Cells(2 + looper, 9)
+                    .Value = value_seeker.Value
+                    .Interior.Color = RGB(235, 241, 221)
+                    .Font.Bold = True
+                    
+                    
+                End With
+            
+            looper = looper + 1
+            
+           End If
+        
+    Next value_seeker
+
+Next office
+
+Worksheets("Lista").Columns("A:H").AutoFit
+       
+Application.ScreenUpdating = True
+
+  
+End Sub
+
