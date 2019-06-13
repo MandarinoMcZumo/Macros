@@ -28,14 +28,14 @@ End If
 
 
 
-For Each office In Worksheets(xSh0).Range("H1:M1")
+For Each office In Worksheets(xSh0).Range("M1:AG1")
 
     office_name = office.Value
 
               
     Worksheets(xSh0).Activate
 
-    For Each value_seeker In Range(Cells(2, office.Column), Cells(40, office.Column))
+    For Each value_seeker In Range(Cells(2, office.Column), Cells(350, office.Column))
         
            If IsEmpty(value_seeker) = False Then
             
@@ -100,8 +100,48 @@ For Each office In Worksheets(xSh0).Range("H1:M1")
                     
                 End With
 
-                
+
                 With Worksheets("Lista").Cells(2 + looper, 9)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 8).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+                
+                
+                With Worksheets("Lista").Cells(2 + looper, 10)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 9).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+                
+                
+                With Worksheets("Lista").Cells(2 + looper, 11)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 10).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+                
+                
+                With Worksheets("Lista").Cells(2 + looper, 12)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 11).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+                
+                
+                With Worksheets("Lista").Cells(2 + looper, 13)
+                    .Value = Worksheets(xSh0).Cells(value_seeker.Row, 12).Value
+                    '.Interior.Color = RGB(235, 241, 221)
+                    
+                    
+                End With
+                
+                
+                With Worksheets("Lista").Cells(2 + looper, 14)
                     .Value = value_seeker.Value
                     .Interior.Color = RGB(235, 241, 221)
                     .Font.Bold = True
@@ -123,4 +163,3 @@ Application.ScreenUpdating = True
 
   
 End Sub
-
