@@ -1,0 +1,37 @@
+Sub Borra_grupos()
+
+ActiveWindow.DisplayZeros = False
+Application.ScreenUpdating = False
+
+Dim celda As Range, suma_stock As Long, linea As Integer, contador As Integer
+
+For Each celda In Range("c9:c545")
+
+    If celda.Interior.Color = 15979459 Then
+    
+       suma_stock = WorksheetFunction.Sum(Range(celda, celda.Offset(0, 30)))
+    
+        If suma_stock = 0 Then
+        
+            linea = celda.Row - 7
+            contador = 0
+            Debug.Print "Línea a eliminar: " & linea
+
+            While contador < 8
+            
+                Rows(linea).Delete
+                contador = contador + 1
+                Debug.Print "Siguiente linea a eliminar: " & linea
+                Debug.Print "Repetición número: " & contador
+                
+            Wend
+                        
+        End If
+            
+    End If
+
+Next celda
+
+Application.ScreenUpdating = True
+
+End Sub
