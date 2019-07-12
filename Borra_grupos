@@ -1,12 +1,15 @@
+
 Sub Borra_grupos()
 
 ActiveWindow.DisplayZeros = False
 Application.ScreenUpdating = False
 
-Dim celda As Range, suma_stock As Long, linea As Integer, contador As Integer, grupos_borrados as long
-grupos_borrados = 0
+Dim celda As Range, suma_stock As Long, linea As Integer, contador As Integer, grupos_borrados As Long
+grupos_borrados = 1
 
 While grupos_borrados > 0
+
+grupos_borrados = 0
 
     For Each celda In Range("c9:c545")
 
