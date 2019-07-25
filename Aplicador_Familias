@@ -1,10 +1,8 @@
 Sub buscar_aplicar_familias()
-
 On Error Resume Next
 
-
 Dim grupo As Range, parametro As Range, grupo_oup As Range, pikasa As Range
-Dim stock As Integer, n_familia As Integer, indicador_bucle As Integer
+Dim stock As String, n_familia As Integer, indicador_bucle As Integer
 Dim office_name As String, grp_1 As String
 Dim oup_master As Integer, oup_1 As Integer
 Dim wb As String, ws As String
@@ -17,154 +15,130 @@ wb = ActiveWorkbook.Name
 ws = ActiveSheet.Name
 office_name = ActiveSheet.Name
 
-Debug.Print "Nombre del libro activo: " & wb
-Debug.Print "Nombre de la hoja activa: " & ws
-Debug.Print "Nombre de la oficina: " & office_name
-
+'Debug.Print "Nombre del libro activo: " & wb
+'Debug.Print "Nombre de la hoja activa: " & ws
+'Debug.Print "Nombre de la oficina: " & office_name
 
 
 'Si la celda coincide para uno de los valores correspondientes a un grupo entonces:
 
 For Each grupo In Workbooks(wb).Sheets(ws).Range("B1:B387")
 
-    If grupo = "4A" Or grupo = "AA" Or grupo = "BB" Or grupo = "CC" Or grupo = "D" Or grupo = "N" Or grupo = "R" Or grupo = "T" Or grupo = "V" Or grupo = "C1" Or grupo = "VV" Or grupo = "E" Or grupo = "DD" Or grupo = "F" Or grupo = "FF" Or grupo = "S" Or grupo = "L" Or grupo = "LK" Or grupo = "RK" Or grupo = "P" Or grupo = "PP" Or grupo = "J" Or grupo = "JJ" Or grupo = "K" Or grupo = "I" Or grupo = "G" Or grupo = "4A" Then
-    
-'Hay que añadir la creación de la línea en la que se determinará si ofrezco o no, y cuánto
+    If grupo = "4A" Or grupo = "AA" Or grupo = "BB" Or grupo = "CC" Or grupo = "CG" Or grupo = "D" Or grupo = "N" Or grupo = "R" Or grupo = "T" Or grupo = "V" Or grupo = "C1" Or grupo = "VV" Or grupo = "E" Or grupo = "DD" Or grupo = "F" Or grupo = "FF" Or grupo = "S" Or grupo = "L" Or grupo = "LK" Or grupo = "RK" Or grupo = "P" Or grupo = "PP" Or grupo = "J" Or grupo = "JJ" Or grupo = "K" Or grupo = "I" Or grupo = "G" Or grupo = "4A" Then
+        'Hay que añadir la creación de la línea en la que se determinará si ofrezco o no, y cuánto
+        grupo.Offset(8, 0).EntireRow.Insert
 
-grupo.Offset(8, 0).EntireRow.Insert
-
-With grupo.Offset(8, 0).EntireRow
-    
-    .Interior.Color = RGB(209, 215, 50)
-    .Font.Bold = True
-    .Font.Color = vbBlack
-    
-'    With .Borders(xlEdgeTop)
-'        .LineStyle = xlContinuous
-'        .ColorIndex = 0
-'        .TintAndShade = 0
-'        .Weight = xlThin
-'    End With
-'
-'    With .Borders(xlEdgeBottom)
-'        .LineStyle = xlContinuous
-'        .ColorIndex = 0
-'        .TintAndShade = 0
-'        .Weight = xlThin
-'    End With
+        With grupo.Offset(8, 0).EntireRow        
+            .Interior.Color = RGB(209, 215, 50)
+            .Font.Bold = True
+            .Font.Color = vbBlack
+            
+            '    With .Borders(xlEdgeTop)
+            '        .LineStyle = xlContinuous
+            '        .ColorIndex = 0
+            '        .TintAndShade = 0
+            '        .Weight = xlThin
+            '    End With
+            '
+            '    With .Borders(xlEdgeBottom)
+            '        .LineStyle = xlContinuous
+            '        .ColorIndex = 0
+            '        .TintAndShade = 0
+            '        .Weight = xlThin
+            '    End With
+            
+        End With
         
-End With
-    
+        With grupo.Offset(8, 1)
+            .Interior.Color = RGB(195, 230, 227)
+            .Font.Color = vbBlack
+            .Font.Bold = True
+        End With
 
-With grupo.Offset(8, 1)
-    .Interior.Color = RGB(195, 230, 227)
-    .Font.Color = vbBlack
-    .Font.Bold = True
-End With
-
-With grupo.Offset(8, 0)
-    .Interior.Color = RGB(1, 187, 176)
-    .Font.Color = vbWhite
-    .Font.Bold = True
-End With
-   
-
-    
-'imprimo el grupo que vamos a tratar
-    Debug.Print " "
-    Debug.Print "Grupo ofertado: " & grupo.Value
-    
-    
-'Te vas al SARG2 y lo activas. Buscas la hoja que coincide con el nombre de la oficina.
-    
-    Workbooks("SARG2.xlsx").Sheets(office_name).Activate
-           
-         
-'Comienzas un bucle que va a pasar por todas las celdas de la columna F en el SARG2
-         For Each parametro In Workbooks("SARG2.xlsx").ActiveSheet.Range("f2", Range("f2").End(xlDown))
-
-'Si el parámetro coincide con el grupo del CDV, entonces:
-            If parametro = grupo Then
+        With grupo.Offset(8, 0)
+            .Interior.Color = RGB(1, 187, 176)
+            .Font.Color = vbWhite
+            .Font.Bold = True
+        End With
             
-            Workbooks("SARG2.xlsx").Activate
+        'imprimo el grupo que vamos a tratar
+        '    Debug.Print " "
+        '    Debug.Print "Grupo ofertado: " & grupo.Value
             
-                
-'Busca la hoja con el orden upgrade, y la activa
+            
+        'Te vas al SARG2 y lo activas. Buscas la hoja que coincide con el nombre de la oficina.
+        Workbooks("SARG2.xlsx").Sheets(office_name).Activate
+            
+        'Comienzas un bucle que va a pasar por todas las celdas de la columna F en el SARG2
+        For Each parametro In Workbooks("SARG2.xlsx").ActiveSheet.Range("f2", Range("f2").End(xlDown))
+
+            'Si el parámetro coincide con el grupo del CDV, entonces:
+            If parametro = grupo Then                
+                Workbooks("SARG2.xlsx").Activate            
+                    
+                'Busca la hoja con el orden upgrade, y la activa
                 Sheets("OUP").Activate
 
-'Aplica un bucle para buscar la prioridad de upgrade para el grupo ofrecido y la guarda en oup_master
+                'Aplica un bucle para buscar la prioridad de upgrade para el grupo ofrecido y la guarda en oup_master
                 For Each grupo_oup In Range("A2", Range("A2").End(xlDown))
-                    
-                        If grupo_oup = grupo Then
                         
-                            oup_master = grupo_oup.Offset(0, 1)
-                        
-                        End If
-                
-               Next grupo_oup
-
-'Ahora vuelve a la hoja de parámetros del SARG2 para la oficina, y busca los grupos cubiertos
-            Sheets(ws).Activate
-            
-            grp_1 = parametro.Offset(0, 1)
-            
-'Ahora busca la prioridad de upgrade para ese grupo y la almacena en oup_1
-            Sheets("OUP").Activate
-            
-            For Each grupo_oup In Range("A2", Range("A2").End(xlDown))
-                    
-                        If grupo_oup = grp_1 Then
-                        
-                            oup_1 = grupo_oup.Offset(0, 1)
+                    If grupo_oup = grupo Then                            
+                        oup_master = grupo_oup.Offset(0, 1)
                             
-                        End If
-                
-            Next grupo_oup
-            
-'Ahora vuelve a la hoja de parámetros del SARG2 para la oficina, para buscar el stock de seguridad para la familia, y almacenarlo en stock
-                Sheets(ws).Activate
-
-                grp_n_familia = parametro.Offset(0, 1).Value
-                stock = parametro.Offset(0, 2).Value
-                
+                    End If
                     
- 'Imprimimos los resultados para ver que efectivamente se han recogido de forma adecuada
-                    Debug.Print "Grupo cubierto: " & grp_n_familia
-                    Debug.Print "Stock de seguridad: " & stock
-                    Debug.Print "Prioridad Orden Upgrade grupo ofertado: " & oup_master
-                    Debug.Print "Prioridad Orden Upgrade grupo cubierto: " & oup_1
+                Next grupo_oup
+
+                'Ahora vuelve a la hoja de parámetros del SARG2 para la oficina, y busca los grupos cubiertos
+                Sheets(ws).Activate                
+                grp_1 = parametro.Offset(0, 1)
                 
+                'Ahora busca la prioridad de upgrade para ese grupo y la almacena en oup_1
+                Sheets("OUP").Activate
+                
+                For Each grupo_oup In Range("A2", Range("A2").End(xlDown))
+                        
+                    If grupo_oup = grp_1 Then                    
+                        oup_1 = grupo_oup.Offset(0, 1)
+                        
+                    End If
+                    
+                Next grupo_oup
+                
+                'Ahora vuelve a la hoja de parámetros del SARG2 para la oficina, para buscar el stock de seguridad para la familia, y almacenarlo en stock
+                Sheets(ws).Activate
+                grp_n_familia = parametro.Offset(0, 1).Value
+                stock = parametro.Offset(0, 2).Value                    
+                        
+                'Imprimimos los resultados para ver que efectivamente se han recogido de forma adecuada
+                'Debug.Print "Grupo cubierto: " & grp_n_familia
+                'Debug.Print "Stock de seguridad: " & stock
+                'Debug.Print "Prioridad Orden Upgrade grupo ofertado: " & oup_master
+                'Debug.Print "Prioridad Orden Upgrade grupo cubierto: " & oup_1
+                    
                 Workbooks(wb).Sheets(office_name).Activate
                 grupo.Offset(8, 1).Value = grupo.Offset(8, 1).Value & grp_n_familia & " "
-                grupo.Offset(8, 0).Value = stock
+                grupo.Offset(8, 0).Value = stock                
                 
-               
-'Termina el bucle para almacenar parámetros
+                'Termina el bucle para almacenar parámetros
             End If
 
-Workbooks(wb).Sheets(office_name).Activate
+            Workbooks(wb).Sheets(office_name).Activate
+            Set pikasa = Range("B3:B350").Find(grp_n_familia, , , xlWhole, , , True)
+
+            If pikasa Is Nothing Then
+                GoTo siguiente_grupo_cubierto
+
+            End If
+
+            'Next celdita
+
+            'Aquí es donde tendré que incorporar la parte en que aplica un bucle a 60 días en el CDV en el que busca el valor del grupo ofertado,
+            'lo compara con el grupo cubierto en base al orden upgrade de cada uno, y tiene en cuenta el margen de seguridad
+            'Cada vez que cambie de valor por añadir más grupos en la familia, simplemente actualiza el valor resultante
 
 
-
-Set pikasa = Range("B3:B350").Find(grp_n_familia, , , xlWhole, , , True)
-
-If pikasa Is Nothing Then
-
-GoTo siguiente_grupo_cubierto
-
-
-End If
-
-
-
-'Next celdita
-
-'Aquí es donde tendré que incorporar la parte en que aplica un bucle a 60 días en el CDV en el que busca el valor del grupo ofertado,
-'lo compara con el grupo cubierto en base al orden upgrade de cada uno, y tiene en cuenta el margen de seguridad
-'Cada vez que cambie de valor por añadir más grupos en la familia, simplemente actualiza el valor resultante
-
-
-'Bucle que se aplicará si el grupo cubierto es un grupo superior al ofertado (LECTURA DE POSITIVOS):
+            'Bucle que se aplicará si el grupo cubierto es un grupo superior al ofertado (LECTURA DE POSITIVOS):
 
             If oup_master < oup_1 Then
             dia = 0
@@ -174,215 +148,182 @@ End If
                     If celdita = grp_n_familia Then
                         columna = celdita.Column
                         fila = celdita.Row
+
                     End If
-            
-            
+                
                 Next celdita
+                    
+                'En caso de existir esta configuración de parámetros, nunca se dará en el primer bucle. Por ello, el valor calculado será:
+                'El máximo entre el valor stock del grupo ofrecido y la suma del valor de los cubiertos + el grupo ofrecido
 
-              
-'En caso de existir esta configuración de parámetros, nunca se dará en el primer bucle. Por ello, el valor calculado será:
-'El máximo entre el valor stock del grupo ofrecido y la suma del valor de los cubiertos + el grupo ofrecido
-
-            While dia <= 60
-            
-                grupo.Offset(8, 2 + dia).Value = grupo.Offset(8, 2 + dia).Value + Cells(fila, columna).Offset(7, 2 + dia).Value
-            
-                dia = dia + 1
-                                
-            Wend
-            
-            dia = 0
-            oup_master = 0
-            oup_1 = 0
-            
-     
+                While dia <= 60        
+                    grupo.Offset(8, 2 + dia).Value = grupo.Offset(8, 2 + dia).Value + Cells(fila, columna).Offset(7, 2 + dia).Value        
+                    dia = dia + 1
+                                    
+                Wend
+                
+                dia = 0
+                oup_master = 0
+                oup_1 = 0
+                
             End If
-        
-      
-        
-'Bucle que se aplicará si el grupo cubierto es igual al grupo ofertado:
-'Únicamente en caso de ser la primera vez que se cubre este bucle, se calculará esta celda. Este valor será igual al stock del grupo ofrecido.
-            
-            If oup_master = oup_1 And oup_master <> 0 And oup_1 <> 0 Then
-            
+                
+                
+            'Bucle que se aplicará si el grupo cubierto es igual al grupo ofertado:
+            'Únicamente en caso de ser la primera vez que se cubre este bucle, se calculará esta celda. Este valor será igual al stock del grupo ofrecido.
+                    
+            If oup_master = oup_1 And oup_master <> 0 And oup_1 <> 0 Then            
                 dia = 0
                             
-                 If IsEmpty(grupo.Offset(8, 2)) = True Then
-                            
-                    While dia <= 60
-                    
+                If IsEmpty(grupo.Offset(8, 2)) = True Then
+                        
+                    While dia <= 60                
                         grupo.Offset(8, 2 + dia).Value = grupo.Offset(7, 2 + dia).Value
                         dia = dia + 1
                         
                     Wend
-                    
-                 Else
-                    
-                     While dia <= 60
-                    
+                
+                Else
+                
+                    While dia <= 60            
                         grupo.Offset(8, 2 + dia).Value = WorksheetFunction.Min(grupo.Offset(7, 2 + dia).Value, grupo.Offset(7, 2 + dia).Value + grupo.Offset(8, 2 + dia).Value)
                         dia = dia + 1
-                        
-                     Wend
-                                        
                     
-                 End If
+                    Wend                                
+                
+                End If
                 
                 dia = 0
                 oup_master = 0
                 oup_1 = 0
                 
-            End If
-        
-        
-        
-'Bucle que se aplicará si el grupo cubierto es un grupo inferior al ofertado (LECTURA DE NEGATIVOS):
+            End If               
+                
+            'Bucle que se aplicará si el grupo cubierto es un grupo inferior al ofertado (LECTURA DE NEGATIVOS):
 
-            If oup_master > oup_1 Then
-            
+            If oup_master > oup_1 Then            
                 dia = 0
                     
-                    For Each celdita In Range("b3:B387")
-                    
-                        If celdita = grp_n_familia Then
-                        
-                            columna = celdita.Column
-                            fila = celdita.Row
-                            
-                            
-                        End If
+                For Each celdita In Range("b3:B387")
                 
-                    Next celdita
-                    
-'Si es el primer bucle, el parámetro será igual al stock del grupo cubierto.
+                    If celdita = grp_n_familia Then                
+                        columna = celdita.Column
+                        fila = celdita.Row                    
+                        
+                    End If
+            
+                Next celdita
+                            
+                'Si es el primer bucle, el parámetro será igual al stock del grupo cubierto.
 
                 If IsEmpty(grupo.Offset(8, 2)) = True Then
                             
-                    While dia <= 60
-                    
+                    While dia <= 60                    
                         grupo.Offset(8, 2 + dia).Value = Cells(fila, columna).Offset(7, 2 + dia).Value
                         dia = dia + 1
                         
-                    Wend
+                    Wend                            
+
+                    'Si no es el primer bucle, aplicaremos unas condiciones en base a si los valores son positivos o negativos,
+
+                Else
                     
-
-'Si no es el primer bucle, aplicaremos unas condiciones en base a si los valores son positivos o negativos,
-
-                 Else
-                     
                     While dia <= 60
-                     
-'Si el valor actual para la suma de grupos cubiertos es positivo, y el nuevo parámetro es negativo, el nuevo valor prevalece.
+                        
+                        'Si el valor actual para la suma de grupos cubiertos es positivo, y el nuevo parámetro es negativo, el nuevo valor prevalece.
 
                         If grupo.Offset(8, 2 + dia).Value >= 0 Then
                         
-                            If Cells(fila, columna).Offset(7, 2 + dia).Value < 0 Then
-                        
-                                grupo.Offset(8, 2 + dia).Value = Cells(fila, columna).Offset(7, 2 + dia).Value
-                                
+                            If Cells(fila, columna).Offset(7, 2 + dia).Value < 0 Then                
+                                grupo.Offset(8, 2 + dia).Value = Cells(fila, columna).Offset(7, 2 + dia).Value                        
                                 dia = dia + 1
                                 
-                            Else
-                                                           
+                            Else                                                    
                                 dia = dia + 1
-                                                                                       
+                                                                                        
                             End If
 
+                        'Si el valor actual para la suma de grupos cubiertos es negativo, el nuevo valor se sumará en todos los casos.
 
-'Si el valor actual para la suma de grupos cubiertos es negativo, el nuevo valor se sumará en todos los casos.
-
-                        Else
-                                                   
-                            grupo.Offset(8, 2 + dia).Value = Cells(fila, columna).Offset(7, 2 + dia).Value + grupo.Offset(8, 2 + dia).Value
-                                                    
+                        Else                                        
+                            grupo.Offset(8, 2 + dia).Value = Cells(fila, columna).Offset(7, 2 + dia).Value + grupo.Offset(8, 2 + dia).Value                                            
                             dia = dia + 1
                             
-                        End If
-                        
-                        
+                        End If                                    
+                                    
                     Wend
-                                                
-                End If
-                     
-                    
+                                                        
+                End If                            
+                            
                 dia = 0
                 oup_master = 0
                 oup_1 = 0
                             
             End If
 
-siguiente_grupo_cubierto:
+            siguiente_grupo_cubierto:
 
-        Next parametro
-    
+        Next parametro        
 
     End If
 
-etiqueta:
+    etiqueta:
 
+    'Comienza a buscar el siguiente grupo
 
-'Comienza a buscar el siguiente grupo
-
-'Debug.Print "Fin del bucle nº " & indicador_bucle
-'indicador_bucle = indicador_bucle + 1
-
-
+    'Debug.Print "Fin del bucle nº " & indicador_bucle
+    'indicador_bucle = indicador_bucle + 1
 
 Next grupo
 
+
 For Each pikasa In Range("B3:B387")
 
-    If pikasa.Value = "Disp. Familia" Then
-    
+    If pikasa.Value = "Disp. Familia" Then    
         pikasa.EntireRow.Delete
     
     End If
 
 Next pikasa
-
 
 
 For Each pikasa In Range("C3:C387")
 
-    If pikasa.Interior.Color = RGB(195, 230, 227) And IsEmpty(pikasa.Value) = True Then
-    
+    If pikasa.Interior.Color = RGB(195, 230, 227) And IsEmpty(pikasa.Value) = True Then    
         pikasa.EntireRow.Delete
     
     End If
 
 Next pikasa
+
 
 For Each pikasa In Range("C3:C387")
 
     If pikasa.Interior.Color = RGB(195, 230, 227) Then
     
-        With pikasa.EntireRow.Borders(xlEdgeBottom)
-        
-        .LineStyle = xlContinuous
-        .ColorIndex = 0
-        .TintAndShade = 0
-        .Weight = xlThin
+        With pikasa.EntireRow.Borders(xlEdgeBottom)        
+            .LineStyle = xlContinuous
+            .ColorIndex = 0
+            .TintAndShade = 0
+            .Weight = xlThin
         
         End With
         
-         With pikasa.EntireRow.Borders(xlEdgeTop)
-        .LineStyle = xlContinuous
-        .ColorIndex = 0
-        .TintAndShade = 0
-        .Weight = xlThin
-        End With
-        
+        With pikasa.EntireRow.Borders(xlEdgeTop)
+            .LineStyle = xlContinuous
+            .ColorIndex = 0
+            .TintAndShade = 0
+            .Weight = xlThin
+            
+        End With        
         
     End If
 
 Next pikasa
 
-
 Workbooks(wb).Activate
-
+Range("B:B").EntireColumn.AutoFit
 Range("C:C").EntireColumn.AutoFit
-
 Application.ScreenUpdating = True
 
 End Sub
-
