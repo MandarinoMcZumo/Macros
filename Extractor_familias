@@ -1,177 +1,156 @@
 Sub Extraer_familias()
 
-
-
 Dim office As Range, value_seeker As Range, value_seeker_info As Range, office_info As Range
 Dim office_name As String, office_name_info As String
 Dim looper As Integer, looper_info As Integer
-
-
+Dim xSh As Worksheet, xWs As Worksheet
 
 Application.ScreenUpdating = False
-
 If ActiveWorkbook.Name <> "SARG2.xlsx" Then
-
-GoTo cagarruta
+    GoTo cagarruta
 
 End If
 
-    Dim xWs As Worksheet
-    Application.DisplayAlerts = False
-    For Each xWs In Application.ActiveWorkbook.Worksheets
-        If xWs.Name <> "SARG2" And xWs.Name <> "OUP" And xWs.Name <> "InfoOficinas" Then
-            xWs.Delete
-        End If
-    Next
-    Application.DisplayAlerts = True
+    
+Application.DisplayAlerts = False
+For Each xWs In Application.ActiveWorkbook.Worksheets
+
+    If xWs.Name <> "SARG2" And xWs.Name <> "OUP" And xWs.Name <> "InfoOficinas" Then
+        xWs.Delete
+
+    End If
+Next
+Application.DisplayAlerts = True
 
 
 For Each office In Range("D1:DQ1")
-
     office_name = office
-
     Sheets.Add.Name = office_name
 
-        With Range("A1")
-            .Value = "Ofreceré..."
-            .Interior.Color = RGB(155, 187, 89)
-            .Font.Color = vbWhite
-            .Font.Bold = True
-        End With
+    With Range("A1")
+        .Value = "Ofreceré..."
+        .Interior.Color = RGB(155, 187, 89)
+        .Font.Color = vbWhite
+        .Font.Bold = True
+    End With
+    
+    With Range("B1")
+        .Value = "siempre que la suma de estos sea..."
+        .Interior.Color = RGB(155, 187, 89)
+        .Font.Color = vbWhite
+        .Font.Bold = True
+    End With
+    
+    With Range("C1")
+        .Value = "Periodo"
+        .Interior.Color = RGB(155, 187, 89)
+        .Font.Color = vbWhite
+        .Font.Bold = True
+    End With
         
-        With Range("B1")
-            .Value = "siempre que la suma de estos sea..."
-            .Interior.Color = RGB(155, 187, 89)
-            .Font.Color = vbWhite
-            .Font.Bold = True
-        End With
+    With Range("D1")
+        .Value = "Parámetro"
+        .Interior.Color = RGB(155, 187, 89)
+        .Font.Color = vbWhite
+        .Font.Bold = True
+    End With        
         
-        With Range("C1")
-            .Value = "Periodo"
-            .Interior.Color = RGB(155, 187, 89)
-            .Font.Color = vbWhite
-            .Font.Bold = True
-        End With
-            
-        With Range("D1")
-            .Value = "Parámetro"
-            .Interior.Color = RGB(155, 187, 89)
-            .Font.Color = vbWhite
-            .Font.Bold = True
-        End With
-            
-            
     Worksheets("SARG2").Activate
 
     For Each value_seeker In Range(Cells(3, office.Column), Cells(230, office.Column))
         
-           If IsEmpty(value_seeker) = False Then
+        If IsEmpty(value_seeker) = False Then
+        
+                            
+            With Worksheets(office_name).Cells(2 + looper, 1)
+                .Value = Worksheets("SARG2").Cells(value_seeker.Row, 1).Value
+                .Interior.Color = RGB(235, 241, 221)
+                .Font.Bold = True
             
-                               
-                With Worksheets(office_name).Cells(2 + looper, 1)
-                    .Value = Worksheets("SARG2").Cells(value_seeker.Row, 1).Value
-                    .Interior.Color = RGB(235, 241, 221)
-                    .Font.Bold = True
-                
-                End With
-                
-                
-                With Worksheets(office_name).Cells(2 + looper, 2)
-                    .Value = Worksheets("SARG2").Cells(value_seeker.Row, 2).Value
-                    .Interior.Color = RGB(235, 241, 221)
-                    .Font.Bold = True
-                
-                End With
-                
-                
-                With Worksheets(office_name).Cells(2 + looper, 3)
-                    .Value = Worksheets("SARG2").Cells(value_seeker.Row, 3).Value
-                    .Interior.Color = RGB(235, 241, 221)
-                    
-                    
-                End With
-                
-                With Worksheets(office_name).Cells(2 + looper, 4)
-                    .Value = value_seeker.Value
-                    .Interior.Color = RGB(235, 241, 221)
-                    
-                    
-                End With
+            End With
             
+            
+            With Worksheets(office_name).Cells(2 + looper, 2)
+                .Value = Worksheets("SARG2").Cells(value_seeker.Row, 2).Value
+                .Interior.Color = RGB(235, 241, 221)
+                .Font.Bold = True
+            
+            End With
+            
+            
+            With Worksheets(office_name).Cells(2 + looper, 3)
+                .Value = Worksheets("SARG2").Cells(value_seeker.Row, 3).Value
+                .Interior.Color = RGB(235, 241, 221)                
+                
+            End With
+            
+            With Worksheets(office_name).Cells(2 + looper, 4)
+                .Value = value_seeker.Value
+                .Interior.Color = RGB(235, 241, 221)                
+                
+            End With
+        
             looper = looper + 1
-            
-           End If
+        
+        End If
            
         Worksheets(office_name).Columns("A:E").AutoFit
         
     Next value_seeker
 
-looper = 0
+    looper = 0
 
-    Next office
-
+Next office
 
 Worksheets("InfoOficinas").Activate
 
-    For Each office_info In Range("B1:CZ1")
-
+For Each office_info In Range("B1:CZ1")
     office_name_info = office_info.Value
 
     For Each value_seeker_info In Range(Cells(2, office_info.Column), Cells(30, office_info.Column))
         
-           If IsEmpty(value_seeker_info) = False Then
-            
-                               
+        If IsEmpty(value_seeker_info) = False Then            
+                            
                 With Worksheets(office_name_info).Cells(2 + looper_info, 16)
                     .Value = Worksheets("InfoOficinas").Cells(value_seeker_info.Row, 1).Value
                     .Interior.Color = RGB(164, 31, 61)
                     .Font.Bold = True
-                    .Font.Color = vbWhite
-                    
+                    .Font.Color = vbWhite                    
                 
-                End With
-            
+                End With            
                 
                 With Worksheets(office_name_info).Cells(2 + looper_info, 17)
                     .Value = value_seeker_info.Value
-                    .Interior.Color = RGB(255, 202, 214)
-                    
+                    .Interior.Color = RGB(255, 202, 214)                    
                     
                 End With
             
             looper_info = looper_info + 1
             
-           End If
+        End If
+
         Worksheets(office_name_info).Columns("A:P").AutoFit
         Worksheets(office_name_info).Range("Q2").ColumnWidth = 10
         
     Next value_seeker_info
 
-   
-   looper_info = 0
+    looper_info = 0
 
-    Next office_info
-       
-Dim xSh As Worksheet
-  
-    For Each xSh In Worksheets
-    
-    If xSh.Name <> "SARG2" And xSh.Name <> "OUP" And xSh.Name <> "InfoOficinas" Then
-    
+Next office_info       
+
+
+For Each xSh In Worksheets
+
+    If xSh.Name <> "SARG2" And xSh.Name <> "OUP" And xSh.Name <> "InfoOficinas" Then        
         xSh.Select
         Call conversor_parametros
         
     End If
-        
-    Next xSh
-   
+    
+Next xSh
 
 Worksheets("SARG2").Activate
-
-cagarruta:
-      
-       
+cagarruta:       
 Application.ScreenUpdating = True
-
   
 End Sub
