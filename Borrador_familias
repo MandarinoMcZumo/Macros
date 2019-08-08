@@ -1,0 +1,23 @@
+Sub Borra_familias()
+
+dim celda as range, fin_familias as boolean
+
+fin_familias = false
+
+While fin_familias = false
+
+    fin_familias = true
+
+    For each celda in range("A3:A500")
+
+        If celda.interior.color = 3332049 then
+            celda.entirerow.delete
+            fin_familias = false
+        end if
+
+    Next celda
+
+Wend
+
+
+End sub
