@@ -1,0 +1,13 @@
+Sub Autoajuste()
+
+Application.ScreenUpdating = False
+
+Cells.Select
+Selection.Rows.AutoFit
+Selection.Columns.AutoFit
+
+Cells(1, 1).Select
+
+Application.ScreenUpdating = True
+
+End Sub
