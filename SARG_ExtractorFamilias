@@ -53,11 +53,11 @@ For Each office In Range("D1:DQ1")
         .Interior.Color = RGB(155, 187, 89)
         .Font.Color = vbWhite
         .Font.Bold = True
-    End With        
+    End With
         
     Worksheets("SARG2").Activate
 
-    For Each value_seeker In Range(Cells(3, office.Column), Cells(230, office.Column))
+    For Each value_seeker In Range(Cells(3, office.Column), Cells(250, office.Column))
         
         If IsEmpty(value_seeker) = False Then
         
@@ -80,13 +80,13 @@ For Each office In Range("D1:DQ1")
             
             With Worksheets(office_name).Cells(2 + looper, 3)
                 .Value = Worksheets("SARG2").Cells(value_seeker.Row, 3).Value
-                .Interior.Color = RGB(235, 241, 221)                
+                .Interior.Color = RGB(235, 241, 221)
                 
             End With
             
             With Worksheets(office_name).Cells(2 + looper, 4)
                 .Value = value_seeker.Value
-                .Interior.Color = RGB(235, 241, 221)                
+                .Interior.Color = RGB(235, 241, 221)
                 
             End With
         
@@ -109,19 +109,19 @@ For Each office_info In Range("B1:CZ1")
 
     For Each value_seeker_info In Range(Cells(2, office_info.Column), Cells(30, office_info.Column))
         
-        If IsEmpty(value_seeker_info) = False Then            
+        If IsEmpty(value_seeker_info) = False Then
                             
                 With Worksheets(office_name_info).Cells(2 + looper_info, 16)
                     .Value = Worksheets("InfoOficinas").Cells(value_seeker_info.Row, 1).Value
                     .Interior.Color = RGB(164, 31, 61)
                     .Font.Bold = True
-                    .Font.Color = vbWhite                    
+                    .Font.Color = vbWhite
                 
-                End With            
+                End With
                 
                 With Worksheets(office_name_info).Cells(2 + looper_info, 17)
                     .Value = value_seeker_info.Value
-                    .Interior.Color = RGB(255, 202, 214)                    
+                    .Interior.Color = RGB(255, 202, 214)
                     
                 End With
             
@@ -136,12 +136,12 @@ For Each office_info In Range("B1:CZ1")
 
     looper_info = 0
 
-Next office_info       
+Next office_info
 
 
 For Each xSh In Worksheets
 
-    If xSh.Name <> "SARG2" And xSh.Name <> "OUP" And xSh.Name <> "InfoOficinas" Then        
+    If xSh.Name <> "SARG2" And xSh.Name <> "OUP" And xSh.Name <> "InfoOficinas" Then
         xSh.Select
         Call conversor_parametros
         
@@ -149,8 +149,110 @@ For Each xSh In Worksheets
     
 Next xSh
 
+Call renombra_hojas
 Worksheets("SARG2").Activate
-cagarruta:       
+cagarruta:
 Application.ScreenUpdating = True
   
 End Sub
+
+Private Sub renombra_hojas()
+On Error Resume Next
+
+Sheets("ALC" & Chr(10) & "ALT").Name = "ALC"
+Sheets("VLC" & Chr(10) & "VLT").Name = "VLC"
+Sheets("PMI" & Chr(10) & "PPM").Name = "PMI"
+Sheets("OPO OP5").Name = "OPO"
+Sheets("AGP" & Chr(10) & "AGT").Name = "AGP"
+Sheets("SVQ" & Chr(10) & "SVT").Name = "SVQ"
+Sheets("PNA" & Chr(10) & "PNT").Name = "PNA"
+Sheets("CTA CT5").Name = "CTA"
+Sheets("PMO PM5").Name = "PMO"
+Sheets("CIA CI5").Name = "CIA"
+Sheets("FCO FC5").Name = "FCO"
+Sheets("MXP MX5").Name = "MXP"
+Sheets("LIS LI5").Name = "LIS"
+Sheets("BLQ BL5").Name = "BLQ"
+
+End Sub
+
+Sub conversor_parametros()
+
+On Error Resume Next
+
+Dim ofrecidos() As String, cubiertos() As String
+Dim mycell As Range
+Dim vuelta As Integer, vuelta2 As Integer, num As Integer, stock_seguridad As String
+Dim repeater As Integer, cuenta As Integer, cuenta2 As Integer
+
+If ActiveWorkbook.Name <> "SARG2.xlsx" Then
+    GoTo cagarruta_1
+
+End If
+
+Range("F2:H300").Clear
+
+With Range("f1")
+    .Value = "Ofrecidos"
+    .Interior.Color = vbBlue
+    .Font.Color = vbWhite
+    .Font.Bold = True
+End With
+
+With Range("g1")
+    .Value = "Cubiertos"
+    .Interior.Color = vbBlue
+    .Font.Color = vbWhite
+    .Font.Bold = True
+End With
+
+With Range("H1")
+    .Value = "Parámetro"
+    .Interior.Color = vbBlue
+    .Font.Color = vbWhite
+    .Font.Bold = True
+End With
+
+
+For Each mycell In Range("A2:A30")
+  
+    If IsEmpty(mycell) = False Then
+        ofrecidos = Split(mycell.Value, " ")    'Selecciono una celda con información
+        cubiertos = Split(mycell.Offset(0, 1), " ")
+        stock_seguridad = mycell.Offset(0, 3)
+        num = 0
+
+        Do Until num > UBound(ofrecidos)               'bucle de los grupos ofrecidos
+                                   
+            Do Until cuenta = UBound(cubiertos) + 1
+                Cells(2 + vuelta2, 6).Value = ofrecidos(num)
+                Cells(2 + vuelta2, 8).Value = stock_seguridad
+                vuelta2 = vuelta2 + 1
+                cuenta = cuenta + 1
+                    
+                'Debug.Print "primer bucle"
+            
+            Loop
+            
+            num = num + 1
+            cuenta = 0
+        
+        Loop
+      
+        cuenta2 = 0
+
+        Do Until cuenta2 = UBound(ofrecidos) + 1            'bucle de los grupos cubiertos
+            Cells(2 + vuelta, 7).Resize(UBound(cubiertos) + 1) = Application.Transpose(cubiertos)
+            vuelta = UBound(cubiertos) + vuelta + 1
+            cuenta2 = cuenta2 + 1
+
+        Loop
+       
+    End If
+    
+Next mycell
+
+cagarruta_1:
+
+End Sub
+
