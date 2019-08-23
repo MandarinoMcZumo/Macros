@@ -1,5 +1,0 @@
-Sub Autofilter_by_selection()
-
-Range(ActiveCell.CurrentRegion.Address).AutoFilter Field:=ActiveCell.Column, Criteria1:=ActiveCell.Value
- 
-End Sub

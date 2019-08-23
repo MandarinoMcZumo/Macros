@@ -1,0 +1,10 @@
+Sub Autofilter_by_selection()
+
+Dim tabla_activa As String
+
+tabla_activa = ActiveCell.ListObject.Name
+
+ActiveSheet.ListObjects(tabla_activa).Range.AutoFilter Field:= _
+        ActiveCell.Column, Criteria1:=ActiveCell.Value
+
+End Sub
