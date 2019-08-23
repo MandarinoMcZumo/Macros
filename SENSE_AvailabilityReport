@@ -1,4 +1,4 @@
-Sub Availability_Qliksense()
+Sub Availability()
 
 On Error Resume Next  'GoTo final1
 Application.DisplayAlerts = False
@@ -8,8 +8,12 @@ Application.DisplayAlerts = False
     For Each xSh In Worksheets
         xSh.Select
         
-        Call Formatoguapo_Qliksense
- 
+        Call Formatoguapo
+        Call Parking
+        Call Availability_pintar
+        Call Urgency
+        
+        
     Next
     
     For Each xSh1 In Worksheets
@@ -17,7 +21,7 @@ Application.DisplayAlerts = False
         If xSh1.Name = "CROATIA" Or xSh1.Name = "SPAIN" Or xSh1.Name = "FRANCE" Or xSh1.Name = "TURKEY" Or xSh1.Name = "GREECE" Or xSh1.Name = "UNITED KINGDOM" Or xSh1.Name = "ITALY" Or xSh1.Name = "PORTUGAL" Then
             Debug.Print xSh1.Name
             xSh1.Select
-            Debug.Print Activeworksheet.Name
+            Debug.Print ACTIVEWORKSHEET.Name
             
         End If
         
@@ -71,7 +75,91 @@ final1:
 
 End Sub
 
-Private Sub Formatoguapo_Qliksense()
+Private Sub Availability_pintar()
+'
+' Availability Macro
+'
+' Acceso directo: Ctrl+Mayús+A
+'
+    Cells.Select
+    With Selection.Font
+        .Name = "Calibri"
+        .Strikethrough = False
+        .Superscript = False
+        .Subscript = False
+        .OutlineFont = False
+        .Shadow = False
+        .Underline = xlUnderlineStyleNone
+        .TintAndShade = 0
+        .ThemeFont = xlThemeFontMinor
+    End With
+
+    Selection.Font.Size = 10
+    Selection.ColumnWidth = 30.29
+    Selection.RowHeight = 17.5
+    Selection.Columns.AutoFit
+    Rows("13:13").Select
+    Rows("12:12").RowHeight = 9
+    Selection.RowHeight = 27
+    Range("B14").Select
+    ActiveWindow.FreezePanes = True
+    
+    Range("B31:AI31").Select
+    Selection.FormatConditions.AddColorScale ColorScaleType:=3
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    Selection.FormatConditions(1).ColorScaleCriteria(1).Type = _
+        xlConditionValueLowestValue
+    With Selection.FormatConditions(1).ColorScaleCriteria(1).FormatColor
+        .Color = 8109667
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).ColorScaleCriteria(2).Type = _
+        xlConditionValuePercentile
+    Selection.FormatConditions(1).ColorScaleCriteria(2).Value = 50
+    With Selection.FormatConditions(1).ColorScaleCriteria(2).FormatColor
+        .Color = 8711167
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).ColorScaleCriteria(3).Type = _
+        xlConditionValueHighestValue
+    With Selection.FormatConditions(1).ColorScaleCriteria(3).FormatColor
+        .Color = 7039480
+        .TintAndShade = 0
+    End With
+    
+        Range("B37:AJ37").Select
+    Selection.FormatConditions.AddColorScale ColorScaleType:=3
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    Selection.FormatConditions(1).ColorScaleCriteria(1).Type = _
+        xlConditionValueLowestValue
+    With Selection.FormatConditions(1).ColorScaleCriteria(1).FormatColor
+        .Color = 8109667
+        .TintAndShade = 0
+    End With
+     Selection.FormatConditions(1).ColorScaleCriteria(2).Type = _
+        xlConditionValuePercentile
+    Selection.FormatConditions(1).ColorScaleCriteria(2).Value = 50
+    With Selection.FormatConditions(1).ColorScaleCriteria(2).FormatColor
+        .Color = 8711167
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).ColorScaleCriteria(3).Type = _
+        xlConditionValueHighestValue
+    With Selection.FormatConditions(1).ColorScaleCriteria(3).FormatColor
+        .Color = 7039480
+        .TintAndShade = 0
+    End With
+    
+    Range("B:DQ").Select
+    Selection.ColumnWidth = 6.29
+        
+    Range("A1").Select
+    ActiveWindow.DisplayZeros = False
+        
+   
+End Sub
+
+Private Sub Formatoguapo()
 
 Dim ceros As Range
 
@@ -113,10 +201,11 @@ End With
 
 'Columna con nombre KPI's
 
-With Range("A13:A36")
+With Range("A13:A37")
 
 .Interior.Color = RGB(245, 245, 245)
 .HorizontalAlignment = xlLeft
+.VerticalAlignment = xlCenter
 .WrapText = True
 
 End With
@@ -198,7 +287,7 @@ End With
 
 'Matriz de Valores
 
-With Range("B14:DQ36")
+With Range("B14:DQ37")
 
 .VerticalAlignment = xlCenter
 
@@ -261,6 +350,56 @@ Next ceros
 Range("A51:DQ74").Delete
 
 'Application.ScreenUpdating = True
+
+
+End Sub
+
+Private Sub Urgency()
+
+Dim pikachu As Range
+
+
+'Disponible comercial bajo
+
+For Each pikachu In Range("B24:Z24")
+
+    If pikachu.Value <= 3 Then
+
+        ActiveSheet.Tab.Color = RGB(255, 186, 125)
+        pikachu.Interior.Color = RGB(255, 186, 125)
+    
+    End If
+
+Next pikachu
+
+'Stock inferior a la mitad de salidas del día siguiente
+
+For Each pikachu In Range("B22:Z22")
+
+    If pikachu.Value <= pikachu.Offset(-2, 1) * 0.5 Then
+    
+        ActiveSheet.Tab.Color = vbRed
+        
+        pikachu.Interior.Color = RGB(255, 186, 125)
+    
+    End If
+
+Next pikachu
+    
+'Lotes de matriculación grabados para ese día o el siguiente
+
+For Each pikachu In Range("B16:C16")
+
+    If pikachu.Value > 0 Then
+    
+        ActiveSheet.Tab.Color = RGB(131, 207, 226)
+        
+        pikachu.Interior.Color = RGB(131, 207, 226)
+    
+    End If
+
+Next pikachu
+    
 
 
 End Sub
