@@ -1,0 +1,154 @@
+Sub Cargador()
+
+Dim huecos_ocupados As Integer, num_cargas As Long, num_coches As Integer
+Dim celda As Range, vhc_groups As New Scripting.Dictionary
+Dim texto_grupo As String, origen As String, destino As String, wb_name As String, xSh_name As String, loads_workbook_name As String
+Dim fecha_RFL As Long, fecha_BB As Long
+
+
+' Me quedo con el nombre del libro y la hoja activos, donde tengo la información de los vehículos a cargar
+wb_name = ActiveWorkbook.Name
+xSh_name = ActiveSheet.Name
+
+' Determinamos origen y destino ÚNICOS y los almaceno en las variables origen y destino
+origen = Workbooks(wb_name).Sheets(xSh_name).Range("K2").Value
+destino = Workbooks(wb_name).Sheets(xSh_name).Range("N2").Value
+
+' Creamos el libro donde subiremos las cargas
+Call Crear_Hoja_Carga(origen, destino, wb_name)
+
+' Almaceno el nombre del libro en la variable loads_workbook_name
+loads_workbook_name = "Carga_Automática " & Format(Now(), "YYYY.MM.DD") & "_" & origen & "-" & destino & ".xlsx"
+
+' Creo un diccionario con los grupos con un valor especial para el espacio de carga en camión, los que no aparezcan ocuparán un hueco de un coche
+Set vhc_groups = New Scripting.Dictionary
+
+With vhc_groups
+    .Add "X", 0.9
+    .Add "AA", 0.9
+    .Add "J", 1.5
+    .Add "JJ", 1.2
+    .Add "K", 2
+    .Add "L", 1.2
+    .Add "F", 1.2
+    .Add "S", 1.2
+
+End With
+
+
+' Comienza el bucle en el que determina el número el hueco de cada vehículo de la lista en el camión, hasta llegar a 8
+For Each celda In Range("AM2", Range("AM2").End(xlDown))
+    
+    ' Almaceno el nombre del grupo en forma de texto en la variable texto_grupo
+    texto_grupo = celda.Value
+    
+    ' Si la variable texto_grupo tiene un valor en el diccionario de los grupos especiales, el espacio en el camión se sumará por ese valor. Sino, sumará un hueco.
+    If vhc_groups.Exists(texto_grupo) Then
+        huecos_ocupados = huecos_ocupados + vhc_groups.Item(texto_grupo)
+        num_coches = num_coches + 1
+     
+    Else:
+        huecos_ocupados = huecos_ocupados + 1
+        num_coches = num_coches + 1
+              
+    End If
+     
+    ' Si tras sumar el coche completamos carga, restablecemos la variable huecos_ocupados (huecos en el camión) y apuntamos 1 carga en la variable num_cargas
+    If huecos_ocupados >= 8 Then
+         num_cargas = num_cargas + 1
+         huecos_ocupados = 0
+
+        ' Determinamos la fecha mínima para la carga, para ello damos valor a las dos matrices de las fechas correspondientes de los vehículos de la carga
+        fecha_RFL = WorksheetFunction.Max(celda.Offset(0, -21), celda.Offset(-num_coches, -21))
+        fecha_BB = WorksheetFunction.Min(celda.Offset(0, -20), celda.Offset(-num_coches, -20))
+
+        'Insertamos en las columnas correspondientes de la hoja de carga el origen y destino y fechas
+        With Workbooks(loads_workbook_name).Sheets("Hoja1")
+            .Cells(1 + num_cargas, 10).Value = origen
+            .Cells(1 + num_cargas, 11).Value = destino
+
+            'Fechas de recogida desde, recogida hasta y entrega desde
+            .Cells(1 + num_cargas, 12).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
+            .Cells(1 + num_cargas, 13).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
+            .Cells(1 + num_cargas, 14).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
+            
+            'Fechas de recogida hasta y entrega hasta
+            .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), 3), fecha_BB)
+            
+            'Número de carga
+            .Cells(1 + num_cargas, 20).Value = num_cargas
+            
+            'Formato tipo fecha
+            '.Range(Cells(1 + num_cargas, 12), Cells(1 + num_cargas, 15)).NumberFormat = "DD/MM/YYYY"
+        End With
+        
+    End If
+     
+    ' Debug.Print "Número de coches " & huecos_ocupados
+    ' Debug.Print "Número de cargas " & num_cargas
+
+Next celda
+
+
+End Sub
+
+
+Private Sub Crear_Hoja_Carga(ByVal nombre_origen As String, nombre_destino As String, wb_name As String)
+
+Dim loads_workbook As String
+
+Workbooks.Add (xlWBATWorksheet)
+loads_workbook = ActiveWorkbook.Name
+
+
+'Damos el formato adecuado al libro, nombrando los encabezados
+
+With Workbooks(loads_workbook).Sheets("Hoja1")
+    .Range("A1").Value = "Centro"
+    .Range("B1").Value = "Ceco"
+    .Range("C1").Value = "Tipo"
+    .Range("D1").Value = "NumOrden"
+    .Range("E1").Value = "Matricula"
+    .Range("F1").Value = "Bastidor"
+    .Range("G1").Value = "NombreMarca"
+    .Range("H1").Value = "Modelo"
+    .Range("I1").Value = "ConcesionarioRecomprador"
+    .Range("J1").Value = "SucursalRecompra"
+    .Range("K1").Value = "CampaDestino"
+    .Range("L1").Value = "RecogidaDesde"
+    .Range("M1").Value = "RecogidaHasta"
+    .Range("N1").Value = "EntregaDesde"
+    .Range("O1").Value = "EntregaHasta"
+    .Range("P1").Value = "Proveedor"
+    .Range("Q1").Value = "Importe"
+    .Range("R1").Value = "minimoVhs"
+    .Range("S1").Value = "maximoVhs"
+    .Range("T1").Value = "Carga"
+    
+End With
+
+
+With Workbooks(loads_workbook).Sheets("Hoja1").Range("A1:T1")
+    .Interior.Color = RGB(91, 155, 213)
+    .Font.Color = vbWhite
+    .Font.Bold = True
+    
+End With
+
+With Workbooks(loads_workbook).Sheets("Hoja1").Range("A:T")
+    .HorizontalAlignment = xlHAlignCenter
+    .Columns.AutoFit
+    
+End With
+
+'Guarda el archivo en la ruta señalada
+
+ActiveWorkbook.SaveAs Filename:="C:\Users\luisalbarracin\Desktop\Test\Carga_Automática " _
+& Format(Now(), "YYYY.MM.DD") & "_" & nombre_origen & "-" & nombre_destino & ".xlsx" _
+, FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
+
+
+Workbooks(wb_name).Activate
+
+End Sub
+
