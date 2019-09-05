@@ -1,7 +1,7 @@
 Sub Cargador()
 
 Dim huecos_ocupados As Integer, num_cargas As Long, num_coches As Integer
-Dim celda As Range, vhc_groups As New Scripting.Dictionary
+Dim celda As Range, vhc_groups As New Scripting.Dictionary, bases As New Scripting.Dictionary
 Dim texto_grupo As String, origen As String, destino As String, wb_name As String, xSh_name As String, loads_workbook_name As String
 Dim fecha_RFL As Long, fecha_BB As Long
 
@@ -10,9 +10,63 @@ Dim fecha_RFL As Long, fecha_BB As Long
 wb_name = ActiveWorkbook.Name
 xSh_name = ActiveSheet.Name
 
+'Creo un diccionario con la relación entre Códigos de Sucursal Recompra y Códigos de Bases de Recompra
+
+Set bases = New Scripting.Dictionary
+
+With bases
+    .Add "ACE", "ACB"
+    .Add "AGP", "MB3"
+    .Add "ALC", "AB2"
+    .Add "BCN", "BCB"
+    .Add "BGY", "BGB"
+    .Add "BIO", "BIB"
+    .Add "BIQ", "BQB"
+    .Add "BLQ", "BLB"
+    .Add "BOD", "BOB"
+    .Add "CAG", "CAB"
+    .Add "CDG", "CD1"
+    .Add "CIA", "CIB"
+    .Add "CTA", "CTB"
+    .Add "EDI", "ED6"
+    .Add "EFL", "EFB"
+    .Add "FAO", "FAB"
+    .Add "FCO", "FCB"
+    .Add "FLR", "FLB"
+    .Add "FUE", "FUB"
+    .Add "GRX", "GRB"
+    .Add "LEI", "LEB"
+    .Add "LIS", "LIB"
+    .Add "LPA", "LPB"
+    .Add "LYS", "LYB"
+    .Add "MAD", "MAB"
+    .Add "MPL", "MP1"
+    .Add "MRS", "MRB"
+    .Add "MXP", "MXB"
+    .Add "NCE", "NCB"
+    .Add "OLB", "OBB"
+    .Add "OPO", "OPB"
+    .Add "ORY", "OR1"
+    .Add "PMI", "PMB"
+    .Add "PSA", "PSB"
+    .Add "SCQ", "SCB"
+    .Add "SVQ", "SVB"
+    .Add "TFN", "TNB"
+    .Add "TFS", "TFB"
+    .Add "TLS", "TLB"
+    .Add "TSF", "TSB"
+    .Add "VCE", "VCB"
+    .Add "VLC", "VLN"
+
+End With
+
 ' Determinamos origen y destino ÚNICOS y los almaceno en las variables origen y destino
 origen = Workbooks(wb_name).Sheets(xSh_name).Range("K2").Value
 destino = Workbooks(wb_name).Sheets(xSh_name).Range("N2").Value
+
+' Cambiamos el valor de la variable origen, actualmente con el código de la sucursal de recompra por el código de la base,
+
+origen = bases.Item(origen)
 
 ' Creamos el libro donde subiremos las cargas
 Call Crear_Hoja_Carga(origen, destino, wb_name)
@@ -34,7 +88,6 @@ With vhc_groups
     .Add "S", 1.2
 
 End With
-
 
 ' Comienza el bucle en el que determina el número el hueco de cada vehículo de la lista en el camión, hasta llegar a 8
 For Each celda In Range("AM2", Range("AM2").End(xlDown))
@@ -77,10 +130,14 @@ For Each celda In Range("AM2", Range("AM2").End(xlDown))
             
             'Número de carga
             .Cells(1 + num_cargas, 20).Value = num_cargas
-            
-            'Formato tipo fecha
-            '.Range(Cells(1 + num_cargas, 12), Cells(1 + num_cargas, 15)).NumberFormat = "DD/MM/YYYY"
+
         End With
+
+        ' With Workbooks(loads_workbook_name).Sheets("Hoja1")
+        '     'Formato tipo fecha
+        '     .Range(Cells(2 + num_cargas, 12), Cells(2 + num_cargas, 15)).NumberFormat = "m/d/yyyy"
+        
+        ' End With
         
     End If
      
@@ -89,6 +146,11 @@ For Each celda In Range("AM2", Range("AM2").End(xlDown))
 
 Next celda
 
+With Workbooks(loads_workbook_name).Sheets("Hoja1")
+
+    Range("AM2", Range("AM2").End(xlDown))
+
+End With
 
 End Sub
 
@@ -151,4 +213,3 @@ ActiveWorkbook.SaveAs Filename:="C:\Users\luisalbarracin\Desktop\Test\Carga_Auto
 Workbooks(wb_name).Activate
 
 End Sub
-
