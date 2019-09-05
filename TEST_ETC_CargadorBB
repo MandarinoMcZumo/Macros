@@ -1,12 +1,12 @@
 Sub Cargador()
 
 Dim huecos_ocupados As Integer, num_cargas As Long, num_coches As Integer
-Dim celda As Range, vhc_groups As New Scripting.Dictionary, bases As New Scripting.Dictionary
-Dim texto_grupo As String, origen As String, destino As String, wb_name As String, xSh_name As String, loads_workbook_name As String
+Dim celda As Range, vhc_groups As New Scripting.Dictionary, bases As New Scripting.Dictionary, centros As New Scripting.Dictionary
+Dim texto_grupo As String, origen As String, destino As String, wb_name As String, xSh_name As String, loads_workbook_name As String, nomvre_tabla as String
 Dim fecha_RFL As Long, fecha_BB As Long
 
 
-' Me quedo con el nombre del libro y la hoja activos, donde tengo la información de los vehículos a cargar
+'Me quedo con el nombre del libro y la hoja activos, donde tengo la información de los vehículos a cargar
 wb_name = ActiveWorkbook.Name
 xSh_name = ActiveSheet.Name
 
@@ -65,6 +65,149 @@ With bases
     .Add "XRY", "XRB"
 
 End With
+
+'Creo un diccionario con los centros de coste para cada base,
+
+Set centros = New Scripting.Dictionary
+
+With centros
+
+    .Add "AB2", "CEN"
+    .Add "AB3", "CEN"
+    .Add "ABA", "CEN"
+    .Add "ABE", "CEN"
+    .Add "ACB", "CEN"
+    .Add "ADE", "CEN"
+    .Add "ATR", "CEN"
+    .Add "BCB", "CEN"
+    .Add "BIB", "CEN"
+    .Add "CDT", "CEN"
+    .Add "FUB", "CEN"
+    .Add "GBB", "CEN"
+    .Add "GEB", "CEN"
+    .Add "GRB", "CEN"
+    .Add "IBB", "CEN"
+    .Add "LEB", "CEN"
+    .Add "LPB", "CEN"
+    .Add "MAB", "CEN"
+    .Add "MB3", "CEN"
+    .Add "MBA", "CEN"
+    .Add "MHB", "CEN"
+    .Add "MJB", "CEN"
+    .Add "OVB", "CEN"
+    .Add "PMB", "CEN"
+    .Add "PNA", "CEN"
+    .Add "QRB", "CEN"
+    .Add "REB", "CEN"
+    .Add "RMB", "CEN"
+    .Add "SCB", "CEN"
+    .Add "SDB", "CEN"
+    .Add "SVB", "CEN"
+    .Add "TFB", "CEN"
+    .Add "TNB", "CEN"
+    .Add "VLN", "CEN"
+    .Add "XRB", "CEN"
+    .Add "XSP", "CEN"
+    .Add "AHO", "CIT"
+    .Add "AOB", "CIT"
+    .Add "BAB", "CIT"
+    .Add "BD6", "CIT"
+    .Add "BDB", "CIT"
+    .Add "BG2", "CIT"
+    .Add "BGB", "CIT"
+    .Add "BLB", "CIT"
+    .Add "CAB", "CIT"
+    .Add "CIB", "CIT"
+    .Add "CTB", "CIT"
+    .Add "FCB", "CIT"
+    .Add "FLB", "CIT"
+    .Add "LNB", "CIT"
+    .Add "MX2", "CIT"
+    .Add "MXB", "CIT"
+    .Add "OBB", "CIT"
+    .Add "OL7", "CIT"
+    .Add "POB", "CIT"
+    .Add "PSB", "CIT"
+    .Add "SUB", "CIT"
+    .Add "TSB", "CIT"
+    .Add "VBB", "CIT"
+    .Add "VCB", "CIT"
+    .Add "BIQ", "FRN"
+    .Add "BOB", "FRN"
+    .Add "BQB", "FRN"
+    .Add "CD1", "FRN"
+    .Add "FRN", "FRN"
+    .Add "LYB", "FRN"
+    .Add "MLB", "FRN"
+    .Add "MP1", "FRN"
+    .Add "MRB", "FRN"
+    .Add "NCB", "FRN"
+    .Add "ORY", "FRN"
+    .Add "TLB", "FRN"
+    .Add "FAB", "GEN"
+    .Add "FNB", "GEN"
+    .Add "GEN", "GEN"
+    .Add "LI7", "GEN"
+    .Add "LIB", "GEN"
+    .Add "OP7", "GEN"
+    .Add "OPB", "GEN"
+    .Add "PDB", "GEN"
+    .Add "TEB", "GEN"
+    .Add "AH2", "GRN"
+    .Add "AHB", "GRN"
+    .Add "CFB", "GRN"
+    .Add "CHB", "GRN"
+    .Add "EFB", "GRN"
+    .Add "GRN", "GRN"
+    .Add "HEB", "GRN"
+    .Add "JTB", "GRN"
+    .Add "RHB", "GRN"
+    .Add "SKB", "GRN"
+    .Add "ZTB", "GRN"
+    .Add "DVB", "HRN"
+    .Add "HRN", "HRN"
+    .Add "SPB", "HRN"
+    .Add "ZGB", "HRN"
+    .Add "AYB", "TRY"
+    .Add "AYT", "TRY"
+    .Add "EBB", "TRY"
+    .Add "ESB", "TRY"
+    .Add "ISB", "TRY"
+    .Add "SAB", "TRY"
+    .Add "SAW", "TRY"
+    .Add "TRY", "TRY"
+
+End With
+
+
+' Ordeno primero por DeliveryDeadline más cercano, después por Ready for loading también más cercano. PRIORIZA ENTONCES EL ReadyForLoading sobre el DeliveryDeadline.
+
+    nombre_tabla = ActiveSheet.ListObjects(1).name
+    ActiveSheet.ListObjects(1).Sort.SortFields.Clear
+    ActiveSheet.ListObjects(1).Sort.SortFields.Add2 _
+        Key:=Range(nombre_tabla & "[[#All],[DeliveryDeadline]]"), SortOn:=xlSortOnValues, _
+        Order:=xlAscending, DataOption:=xlSortNormal
+
+    With ActiveSheet.ListObjects(1).Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+
+    ActiveSheet.ListObjects(1).Sort.SortFields.Clear
+    ActiveSheet.ListObjects(1).Sort.SortFields.Add2 _
+        Key:=Range(nombre_tabla & "[[#All],[ReadyForLoading]]"), SortOn:=xlSortOnValues, _
+        Order:=xlAscending, DataOption:=xlSortNormal
+
+    With ActiveSheet.ListObjects(1).Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
 
 ' Determinamos origen y destino ÚNICOS y los almaceno en las variables origen y destino
 origen = Workbooks(wb_name).Sheets(xSh_name).Range("K2").Value
@@ -142,6 +285,9 @@ For Each celda In Range("AM2", Range("AM2").End(xlDown))
 
             'Tipo de carga = 2
             .Cells(1 + num_cargas, 3).Value = 2
+
+            'Centro de coste
+            .Cells(1 + num_cargas, 1).Value = centros.Item(origen)
 
         End With
 
