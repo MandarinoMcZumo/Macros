@@ -1,11 +1,12 @@
 Sub Cargador()
 
 ' Declaro las variables
-    Dim huecos_ocupados As Integer, num_cargas As Long, num_coches As Integer
+    Dim huecos_ocupados As Integer, num_cargas As Long, num_coches As Integer, ultimo_coche as Long
     Dim celda As Range, vhc_groups As New Scripting.Dictionary, bases As New Scripting.Dictionary, centros As New Scripting.Dictionary
-    Dim texto_grupo As String, origen As String, destino As String, wb_name As String, xSh_name As String, loads_workbook_name As String, nomvre_tabla as String
+    Dim texto_grupo As String, origen As String, destino As String, wb_name As String, xSh_name As String, loads_workbook_name As String, nombre_tabla as String
     Dim fecha_RFL As Long, fecha_BB As Long
 
+    
 
 ' Me quedo con el nombre del libro y la hoja activos, donde tengo la información de los vehículos a cargar
     wb_name = ActiveWorkbook.Name
@@ -241,6 +242,9 @@ Sub Cargador()
         .Add "S", 1.2
 
     End With
+' Especifico que la variable de control control_ultima_carga es FALSO
+
+    control_ultima_carga = False
 
 ' Comienza el bucle en el que determina el número el hueco de cada vehículo de la lista en el camión, hasta llegar a 8
     For Each celda In Range("AM2", Range("AM2").End(xlDown))
@@ -263,7 +267,7 @@ Sub Cargador()
             If huecos_ocupados >= 8 Then
                 num_cargas = num_cargas + 1
                 huecos_ocupados = 0
-
+                
                 ' Determinamos la fecha mínima para la carga, para ello damos valor a las dos matrices de las fechas correspondientes de los vehículos de la carga
                     fecha_RFL = WorksheetFunction.Max(celda.Offset(0, -21), celda.Offset(-num_coches, -21))
                     fecha_BB = WorksheetFunction.Min(celda.Offset(0, -20), celda.Offset(-num_coches, -20))
@@ -295,12 +299,64 @@ Sub Cargador()
 
                     End With
 
+                num_coches = 0
+
             End If
 
             ' Debug.Print "Número de coches " & huecos_ocupados
             ' Debug.Print "Número de cargas " & num_cargas
 
+    ultimo_coche = celda.row
     Next celda
+
+' Comienzo la comprobación de si se han quedado coches sueltos sin carga asignada por no llegar a 8 huecos,
+
+    If huecos_ocupados>0 Then
+        num_cargas = num_cargas + 1
+        
+
+        ' Determinamos la fecha mínima para la carga, para ello damos valor a las dos matrices de las fechas correspondientes de los vehículos de la carga
+            fecha_RFL = WorksheetFunction.Max(Cells(ultimo_coche, 18), Cells(ultimo_coche - num_coches, 18))
+            fecha_BB = WorksheetFunction.Min(Cells(ultimo_coche, 19), Cells(ultimo_coche - num_coches, 19))
+
+        ' Insertamos en las columnas correspondientes de la hoja de carga el origen y destino y fechas
+            With Workbooks(loads_workbook_name).Sheets("Hoja1")
+                    .Cells(1 + num_cargas, 10).Value = origen
+                    .Cells(1 + num_cargas, 11).Value = destino
+
+                'Fechas de recogida desde, recogida hasta y entrega desde
+                    .Cells(1 + num_cargas, 12).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
+                    .Cells(1 + num_cargas, 13).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
+                    .Cells(1 + num_cargas, 14).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
+                
+                'Fechas de recogida hasta y entrega hasta
+                    .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), 3), fecha_BB)
+                
+                'Número de carga
+                    .Cells(1 + num_cargas, 20).Value = num_cargas
+
+                'Ceco = Recompra
+                    .Cells(1 + num_cargas, 2).Value = "Recompra"
+
+                'Tipo de carga = 2
+                    .Cells(1 + num_cargas, 3).Value = 2
+
+                'Centro de coste
+                    .Cells(1 + num_cargas, 1).Value = centros.Item(origen)
+
+                'Número de vehículos
+                    If huecos_ocupados <= 4 Then
+                        .cells(1 + num_cargas, 18).value = num_coches
+                        .cells(1 + num_cargas, 19).value = num_coches
+                    
+                    End If
+
+            End With
+            
+            huecos_ocupados = 0
+        
+    End If
+    
 
 ' Selecciono las fechas de la hoja de carga creada y les aplico el formato correcto
 
@@ -315,8 +371,6 @@ Sub Cargador()
 ' Fin de la macro
 
 End Sub
-
-
 
 
 Private Sub Crear_Hoja_Carga(ByVal nombre_origen As String, nombre_destino As String, wb_name As String)
