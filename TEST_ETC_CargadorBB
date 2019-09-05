@@ -137,23 +137,35 @@ For Each celda In Range("AM2", Range("AM2").End(xlDown))
             'Número de carga
             .Cells(1 + num_cargas, 20).Value = num_cargas
 
+            'Ceco = Recompra
+            .Cells(1 + num_cargas, 2).Value = "Recompra"
+
+            'Tipo de carga = 2
+            .Cells(1 + num_cargas, 3).Value = 2
+
         End With
 
-'        With Workbooks(loads_workbook_name).Sheets("Hoja1")
-'            'Formato tipo fecha
-'            .Range(Cells(2 + num_cargas, 12), Cells(2 + num_cargas, 15)).NumberFormat = "m/d/yyyy"
-'
-'        End With
-        
     End If
-     
+
     ' Debug.Print "Número de coches " & huecos_ocupados
     ' Debug.Print "Número de cargas " & num_cargas
 
 Next celda
 
+' Selecciono las fechas de la hoja de carga creada y les aplico el formato correcto
+
+Workbooks(loads_workbook_name).Activate
+Sheets("Hoja1").Range(Cells(2, 12), Cells(2 + num_cargas, 15)).NumberFormat = "m/d/yyyy"
+
+' Autoajusto el ancho de las columnas
+
+Range("A:T").Columns.AutoFit
+
+
+' Fin de la macro
 
 End Sub
+
 
 
 
