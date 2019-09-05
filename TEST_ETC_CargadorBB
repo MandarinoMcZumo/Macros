@@ -282,7 +282,7 @@ Sub Cargador()
                             .Cells(1 + num_cargas, 13).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                             .Cells(1 + num_cargas, 14).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                         
-                        'Fechas de recogida hasta y entrega hasta
+                        'Fecha de entrega hasta
                             .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), 3), fecha_BB)
                         
                         'Número de carga
@@ -329,7 +329,7 @@ Sub Cargador()
                     .Cells(1 + num_cargas, 13).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                     .Cells(1 + num_cargas, 14).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                 
-                'Fechas de recogida hasta y entrega hasta
+                'Fecha de entrega hasta
                     .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), 3), fecha_BB)
                 
                 'Número de carga
