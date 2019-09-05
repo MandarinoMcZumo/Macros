@@ -34,6 +34,7 @@ With bases
     .Add "FCO", "FCB"
     .Add "FLR", "FLB"
     .Add "FUE", "FUB"
+    .Add "GRO", "GEB"
     .Add "GRX", "GRB"
     .Add "LEI", "LEB"
     .Add "LIS", "LIB"
@@ -47,9 +48,13 @@ With bases
     .Add "OLB", "OBB"
     .Add "OPO", "OPB"
     .Add "ORY", "OR1"
+    .Add "OVD", "OVB"
     .Add "PMI", "PMB"
     .Add "PSA", "PSB"
+    .Add "REU", "REB"
+    .Add "RMU", "RMB"
     .Add "SCQ", "SCB"
+    .Add "SDR", "SDB"
     .Add "SVQ", "SVB"
     .Add "TFN", "TNB"
     .Add "TFS", "TFB"
@@ -57,6 +62,7 @@ With bases
     .Add "TSF", "TSB"
     .Add "VCE", "VCB"
     .Add "VLC", "VLN"
+    .Add "XRY", "XRB"
 
 End With
 
@@ -133,11 +139,11 @@ For Each celda In Range("AM2", Range("AM2").End(xlDown))
 
         End With
 
-        ' With Workbooks(loads_workbook_name).Sheets("Hoja1")
-        '     'Formato tipo fecha
-        '     .Range(Cells(2 + num_cargas, 12), Cells(2 + num_cargas, 15)).NumberFormat = "m/d/yyyy"
-        
-        ' End With
+'        With Workbooks(loads_workbook_name).Sheets("Hoja1")
+'            'Formato tipo fecha
+'            .Range(Cells(2 + num_cargas, 12), Cells(2 + num_cargas, 15)).NumberFormat = "m/d/yyyy"
+'
+'        End With
         
     End If
      
@@ -146,13 +152,9 @@ For Each celda In Range("AM2", Range("AM2").End(xlDown))
 
 Next celda
 
-With Workbooks(loads_workbook_name).Sheets("Hoja1")
-
-    Range("AM2", Range("AM2").End(xlDown))
-
-End With
 
 End Sub
+
 
 
 Private Sub Crear_Hoja_Carga(ByVal nombre_origen As String, nombre_destino As String, wb_name As String)
