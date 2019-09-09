@@ -1,10 +1,10 @@
 Sub Cargador()
 
 ' Declaro las variables
-    Dim huecos_ocupados As Integer, num_cargas As Long, num_coches As Integer, ultimo_coche as Long
+    Dim huecos_ocupados As Double, num_cargas As Long, num_coches As Integer, ultimo_coche As Long
     Dim celda As Range, vhc_groups As New Scripting.Dictionary, bases As New Scripting.Dictionary, centros As New Scripting.Dictionary
-    Dim texto_grupo As String, origen As String, destino As String, wb_name As String, xSh_name As String, loads_workbook_name As String, nombre_tabla as String
-    Dim fecha_RFL As Long, fecha_BB As Long
+    Dim texto_grupo As String, origen As String, destino As String, wb_name As String, xSh_name As String, loads_workbook_name As String, nombre_tabla As String
+    Dim fecha_RFL As Long, fecha_BB As Long, intervalo_RFL As Range, intervalo_BB As Range, intervalo_RFL_2 As Range, intervalo_BB_2 As Range
 
     
 
@@ -184,7 +184,7 @@ Sub Cargador()
 
 ' Ordeno primero por DeliveryDeadline más cercano, después por Ready for loading también más cercano. PRIORIZA ENTONCES EL ReadyForLoading sobre el DeliveryDeadline.
 
-    nombre_tabla = ActiveSheet.ListObjects(1).name
+    nombre_tabla = ActiveSheet.ListObjects(1).Name
     ActiveSheet.ListObjects(1).Sort.SortFields.Clear
     ActiveSheet.ListObjects(1).Sort.SortFields.Add2 _
         Key:=Range(nombre_tabla & "[[#All],[DeliveryDeadline]]"), SortOn:=xlSortOnValues, _
@@ -234,7 +234,7 @@ Sub Cargador()
     With vhc_groups
         .Add "X", 0.9
         .Add "AA", 0.9
-        .Add "J", 1.5
+        .Add "J", 1.4
         .Add "JJ", 1.2
         .Add "K", 2
         .Add "L", 1.2
@@ -249,11 +249,12 @@ Sub Cargador()
 ' Comienza el bucle en el que determina el número el hueco de cada vehículo de la lista en el camión, hasta llegar a 8
     For Each celda In Range("AM2", Range("AM2").End(xlDown))
         
-        ' Almaceno el nombre del grupo en forma de texto en la variable texto_grupo
+        ' Almaceno el nombre del grupo en forma de texto en la variable texto_grupoX
             texto_grupo = celda.Value
         
         ' Si la variable texto_grupo tiene un valor en el diccionario de los grupos especiales, el espacio en el camión se sumará por ese valor. Sino, sumará un hueco.
-            If vhc_groups.Exists(texto_grupo) Then
+        Debug.Print vhc_groups.Exists(texto_grupo)
+            If vhc_groups.Exists(texto_grupo) = True Then
                 huecos_ocupados = huecos_ocupados + vhc_groups.Item(texto_grupo)
                 num_coches = num_coches + 1
             
@@ -269,9 +270,21 @@ Sub Cargador()
                 huecos_ocupados = 0
                 
                 ' Determinamos la fecha mínima para la carga, para ello damos valor a las dos matrices de las fechas correspondientes de los vehículos de la carga
-                    fecha_RFL = WorksheetFunction.Max(celda.Offset(0, -21), celda.Offset(-num_coches, -21))
-                    fecha_BB = WorksheetFunction.Min(celda.Offset(0, -20), celda.Offset(-num_coches, -20))
 
+
+                    For Each intervalo_RFL In Range(celda.Offset(0, -21), celda.Offset(-num_coches + 1, -21))
+                        If intervalo_RFL >= intervalo_RFL.Offset(-1, 0) Then
+                            fecha_RFL = intervalo_RFL.Value
+                        End If
+                    Next intervalo_RFL
+                    
+                    For Each intervalo_BB In Range(celda.Offset(0, -20), celda.Offset(-num_coches + 1, -20))
+                        If intervalo_BB < intervalo_BB.Offset(-1, 0) Then
+                            fecha_BB = intervalo_BB.Value
+                        End If
+                    Next intervalo_BB
+
+                    
                 ' Insertamos en las columnas correspondientes de la hoja de carga el origen y destino y fechas
                     With Workbooks(loads_workbook_name).Sheets("Hoja1")
                             .Cells(1 + num_cargas, 10).Value = origen
@@ -282,7 +295,7 @@ Sub Cargador()
                             .Cells(1 + num_cargas, 13).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                             .Cells(1 + num_cargas, 14).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                         
-                        'Fecha de entrega hasta
+                        'Fechas de recogida hasta y entrega hasta
                             .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), 3), fecha_BB)
                         
                         'Número de carga
@@ -306,18 +319,28 @@ Sub Cargador()
             ' Debug.Print "Número de coches " & huecos_ocupados
             ' Debug.Print "Número de cargas " & num_cargas
 
-    ultimo_coche = celda.row
+    ultimo_coche = celda.Row
     Next celda
 
 ' Comienzo la comprobación de si se han quedado coches sueltos sin carga asignada por no llegar a 8 huecos,
 
-    If huecos_ocupados>0 Then
+    If huecos_ocupados > 0 Then
         num_cargas = num_cargas + 1
         
-
         ' Determinamos la fecha mínima para la carga, para ello damos valor a las dos matrices de las fechas correspondientes de los vehículos de la carga
-            fecha_RFL = WorksheetFunction.Max(Cells(ultimo_coche, 18), Cells(ultimo_coche - num_coches, 18))
-            fecha_BB = WorksheetFunction.Min(Cells(ultimo_coche, 19), Cells(ultimo_coche - num_coches, 19))
+
+            For Each intervalo_RFL_2 In Range(Cells(ultimo_coche, 18), Cells(ultimo_coche - num_coches + 1, 18))
+                If intervalo_RFL_2 >= intervalo_RFL_2.Offset(-1, 0) Then
+                    fecha_RFL = intervalo_RFL_2.Value
+                End If
+            Next intervalo_RFL_2
+            
+            For Each intervalo_BB_2 In Range(Cells(ultimo_coche, 19), Cells(ultimo_coche - num_coches + 1, 19))
+                If intervalo_BB_2 < intervalo_BB_2.Offset(-1, 0) Then
+                    fecha_BB = intervalo_BB_2.Value
+                End If
+            Next intervalo_BB_2
+
 
         ' Insertamos en las columnas correspondientes de la hoja de carga el origen y destino y fechas
             With Workbooks(loads_workbook_name).Sheets("Hoja1")
@@ -329,7 +352,7 @@ Sub Cargador()
                     .Cells(1 + num_cargas, 13).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                     .Cells(1 + num_cargas, 14).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                 
-                'Fecha de entrega hasta
+                'Fechas de recogida hasta y entrega hasta
                     .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), 3), fecha_BB)
                 
                 'Número de carga
@@ -346,8 +369,8 @@ Sub Cargador()
 
                 'Número de vehículos
                     If huecos_ocupados <= 4 Then
-                        .cells(1 + num_cargas, 18).value = num_coches
-                        .cells(1 + num_cargas, 19).value = num_coches
+                        .Cells(1 + num_cargas, 18).Value = num_coches
+                        .Cells(1 + num_cargas, 19).Value = num_coches
                     
                     End If
 
@@ -371,6 +394,7 @@ Sub Cargador()
 ' Fin de la macro
 
 End Sub
+
 
 
 Private Sub Crear_Hoja_Carga(ByVal nombre_origen As String, nombre_destino As String, wb_name As String)
