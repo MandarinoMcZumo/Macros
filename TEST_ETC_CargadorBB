@@ -1,4 +1,5 @@
 
+
 Sub Cargador()
 
 ' Declaro las variables
@@ -321,6 +322,8 @@ Sub Cargador()
                     End With
 
                 num_coches = 0
+                fecha_RFL = 1
+                fecha_BB = 50000
 
             End If
 
@@ -389,7 +392,8 @@ Sub Cargador()
                     End If
 
             End With
-            
+            fecha_RFL = 1
+            fecha_BB = 50000
             huecos_ocupados = 0
         
     End If
