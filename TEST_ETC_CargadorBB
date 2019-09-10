@@ -1,3 +1,4 @@
+
 Sub Cargador()
 
 ' Declaro las variables
@@ -6,7 +7,7 @@ Sub Cargador()
     Dim texto_grupo As String, origen As String, destino As String, wb_name As String, xSh_name As String, loads_workbook_name As String, nombre_tabla As String
     Dim fecha_RFL As Long, fecha_BB As Long, intervalo_RFL As Range, intervalo_BB As Range, intervalo_RFL_2 As Range, intervalo_BB_2 As Range
 
-    
+    Application.Calculation = xlCalculationManual
 
 ' Me quedo con el nombre del libro y la hoja activos, donde tengo la información de los vehículos a cargar
     wb_name = ActiveWorkbook.Name
@@ -235,11 +236,11 @@ Sub Cargador()
         .Add "X", 0.9
         .Add "AA", 0.9
         .Add "J", 1.4
-        .Add "JJ", 1.2
+        .Add "JJ", 1.14
         .Add "K", 2
-        .Add "L", 1.2
-        .Add "F", 1.2
-        .Add "S", 1.2
+        .Add "L", 1.14
+        .Add "F", 1.14
+        .Add "S", 1.14
 
     End With
 ' Especifico que la variable de control control_ultima_carga es FALSO
@@ -270,17 +271,24 @@ Sub Cargador()
                 huecos_ocupados = 0
                 
                 ' Determinamos la fecha mínima para la carga, para ello damos valor a las dos matrices de las fechas correspondientes de los vehículos de la carga
+                    ' intervalo_RFL = Range(celda.Offset(0, -21), celda.Offset(-num_coches + 1, -21))
+                    ' intervalo_BB = Range(celda.Offset(0, -20), celda.Offset(-num_coches + 1, -20))
+                    ' fecha_RFL = WorksheetFunction.Max(intervalo_RFL)
+                    ' fecha_RFL = WorksheetFunction.Min(intervalo_BB)
 
-
-                    For Each intervalo_RFL In Range(celda.Offset(0, -21), celda.Offset(-num_coches + 1, -21))
+                    For Each intervalo_RFL In Range(celda.Offset(0, -21), celda.Offset(-num_coches + 2, -21))
                         If intervalo_RFL >= intervalo_RFL.Offset(-1, 0) Then
                             fecha_RFL = intervalo_RFL.Value
+                            Else
+                             fecha_RFL = intervalo_RFL.Offset(-1, 0)
                         End If
                     Next intervalo_RFL
                     
-                    For Each intervalo_BB In Range(celda.Offset(0, -20), celda.Offset(-num_coches + 1, -20))
+                    For Each intervalo_BB In Range(celda.Offset(0, -20), celda.Offset(-num_coches + 2, -20))
                         If intervalo_BB < intervalo_BB.Offset(-1, 0) Then
                             fecha_BB = intervalo_BB.Value
+                            Else
+                            fecha_BB = intervalo_BB.Offset(-1, 0)
                         End If
                     Next intervalo_BB
 
@@ -328,16 +336,22 @@ Sub Cargador()
         num_cargas = num_cargas + 1
         
         ' Determinamos la fecha mínima para la carga, para ello damos valor a las dos matrices de las fechas correspondientes de los vehículos de la carga
+'            fecha_RFL = WorksheetFunction.Max(Cells(ultimo_coche, 18), Cells(ultimo_coche - num_coches, 18))
+'            fecha_BB = WorksheetFunction.Min(Cells(ultimo_coche, 19), Cells(ultimo_coche - num_coches, 19))
 
             For Each intervalo_RFL_2 In Range(Cells(ultimo_coche, 18), Cells(ultimo_coche - num_coches + 1, 18))
                 If intervalo_RFL_2 >= intervalo_RFL_2.Offset(-1, 0) Then
                     fecha_RFL = intervalo_RFL_2.Value
+                    Else
+                    fecha_RFL = intervalo_RFL_2.Offset(-1, 0)
                 End If
             Next intervalo_RFL_2
             
             For Each intervalo_BB_2 In Range(Cells(ultimo_coche, 19), Cells(ultimo_coche - num_coches + 1, 19))
                 If intervalo_BB_2 < intervalo_BB_2.Offset(-1, 0) Then
                     fecha_BB = intervalo_BB_2.Value
+                    Else
+                    fecha_BB = intervalo_BB_2.Offset(-1, 0)
                 End If
             Next intervalo_BB_2
 
@@ -389,12 +403,11 @@ Sub Cargador()
 ' Autoajusto el ancho de las columnas
 
     Range("A:T").Columns.AutoFit
-
+    Application.Calculation = xlCalculationAutomatic
 
 ' Fin de la macro
 
 End Sub
-
 
 
 Private Sub Crear_Hoja_Carga(ByVal nombre_origen As String, nombre_destino As String, wb_name As String)
