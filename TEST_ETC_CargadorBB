@@ -1,23 +1,31 @@
-
-
 Sub Cargador()
 
+' Versión 1.0.0
+
+    On Error Resume Next
+
 ' Declaro las variables
-    Dim huecos_ocupados As Double, num_cargas As Long, num_coches As Integer, ultimo_coche As Long
+    Dim huecos_ocupados As Double, num_cargas As Long, num_coches As Integer, ultimo_coche As Long, codigo_proveedor As Long, dias_transporte As Integer
     Dim celda As Range, vhc_groups As New Scripting.Dictionary, bases As New Scripting.Dictionary, centros As New Scripting.Dictionary
     Dim texto_grupo As String, origen As String, destino As String, wb_name As String, xSh_name As String, loads_workbook_name As String, nombre_tabla As String
     Dim fecha_RFL As Long, fecha_BB As Long, intervalo_RFL As Range, intervalo_BB As Range, intervalo_RFL_2 As Range, intervalo_BB_2 As Range
 
+' Apago el cálculo automático para evitar que otros archivos de Excel abiertos ralenticen la macro
     Application.Calculation = xlCalculationManual
+
+' Establezco los días laborables para el transporte
+    dias_transporte = 3
 
 ' Me quedo con el nombre del libro y la hoja activos, donde tengo la información de los vehículos a cargar
     wb_name = ActiveWorkbook.Name
     xSh_name = ActiveSheet.Name
 
+' Introduzco el código de proveedor
+    codigo_proveedor = InputBox("Por favor, introduce el código del proveedor a asignar estas cargas. Si dejas el campo en blanco, asegúrate de rellenarlo más adelante.", "Código Proveedor")
+
 ' Creo un diccionario con la relación entre Códigos de Sucursal Recompra y Códigos de Bases de Recompra
-
     Set bases = New Scripting.Dictionary
-
+    
     With bases
         .Add "ACE", "ACB"
         .Add "AGP", "MB3"
@@ -26,6 +34,7 @@ Sub Cargador()
         .Add "BGY", "BGB"
         .Add "BIO", "BIB"
         .Add "BIQ", "BQB"
+        .Add "BDS", "BDB"
         .Add "BLQ", "BLB"
         .Add "BOD", "BOB"
         .Add "CAG", "CAB"
@@ -41,7 +50,7 @@ Sub Cargador()
         .Add "GRO", "GEB"
         .Add "GRX", "GRB"
         .Add "LEI", "LEB"
-        .Add "LIS", "LIB"
+        .Add "LIS", "LI7"
         .Add "LPA", "LPB"
         .Add "LYS", "LYB"
         .Add "MAD", "MAB"
@@ -50,7 +59,7 @@ Sub Cargador()
         .Add "MXP", "MXB"
         .Add "NCE", "NCB"
         .Add "OLB", "OBB"
-        .Add "OPO", "OPB"
+        .Add "OPO", "OP7"
         .Add "ORY", "OR1"
         .Add "OVD", "OVB"
         .Add "PMI", "PMB"
@@ -59,6 +68,7 @@ Sub Cargador()
         .Add "RMU", "RMB"
         .Add "SCQ", "SCB"
         .Add "SDR", "SDB"
+        .Add "SUF", "SUB"
         .Add "SVQ", "SVB"
         .Add "TFN", "TNB"
         .Add "TFS", "TFB"
@@ -71,7 +81,6 @@ Sub Cargador()
     End With
 
 ' Creo un diccionario con los centros de coste para cada base,
-
     Set centros = New Scripting.Dictionary
 
     With centros
@@ -183,9 +192,7 @@ Sub Cargador()
 
     End With
 
-
 ' Ordeno primero por DeliveryDeadline más cercano, después por Ready for loading también más cercano. PRIORIZA ENTONCES EL ReadyForLoading sobre el DeliveryDeadline.
-
     nombre_tabla = ActiveSheet.ListObjects(1).Name
     ActiveSheet.ListObjects(1).Sort.SortFields.Clear
     ActiveSheet.ListObjects(1).Sort.SortFields.Add2 _
@@ -214,20 +221,16 @@ Sub Cargador()
     End With
 
 ' Determinamos origen y destino ÚNICOS y los almaceno en las variables origen y destino
-
     origen = Workbooks(wb_name).Sheets(xSh_name).Range("K2").Value
     destino = Workbooks(wb_name).Sheets(xSh_name).Range("N2").Value
 
 ' Cambiamos el valor de la variable origen, actualmente con el código de la sucursal de recompra por el código de la base,
-
     origen = bases.Item(origen)
 
 ' Creamos el libro donde subiremos las cargas
-
     Call Crear_Hoja_Carga(origen, destino, wb_name)
 
 ' Almaceno el nombre del libro en la variable loads_workbook_name
-
     loads_workbook_name = "Carga_Automática " & Format(Now(), "YYYY.MM.DD") & "_" & origen & "-" & destino & ".xlsx"
 
 ' Creo un diccionario con los grupos con un valor especial para el espacio de carga en camión, los que no aparezcan ocuparán un hueco de un coche
@@ -244,8 +247,8 @@ Sub Cargador()
         .Add "S", 1.14
 
     End With
-' Especifico que la variable de control control_ultima_carga es FALSO
 
+' Especifico que la variable de control control_ultima_carga es FALSO
     control_ultima_carga = False
 
 ' Comienza el bucle en el que determina el número el hueco de cada vehículo de la lista en el camión, hasta llegar a 8
@@ -255,7 +258,7 @@ Sub Cargador()
             texto_grupo = celda.Value
         
         ' Si la variable texto_grupo tiene un valor en el diccionario de los grupos especiales, el espacio en el camión se sumará por ese valor. Sino, sumará un hueco.
-        Debug.Print vhc_groups.Exists(texto_grupo)
+            Debug.Print vhc_groups.Exists(texto_grupo)
             If vhc_groups.Exists(texto_grupo) = True Then
                 huecos_ocupados = huecos_ocupados + vhc_groups.Item(texto_grupo)
                 num_coches = num_coches + 1
@@ -270,12 +273,6 @@ Sub Cargador()
             If huecos_ocupados >= 8 Then
                 num_cargas = num_cargas + 1
                 huecos_ocupados = 0
-                
-                ' Determinamos la fecha mínima para la carga, para ello damos valor a las dos matrices de las fechas correspondientes de los vehículos de la carga
-                    ' intervalo_RFL = Range(celda.Offset(0, -21), celda.Offset(-num_coches + 1, -21))
-                    ' intervalo_BB = Range(celda.Offset(0, -20), celda.Offset(-num_coches + 1, -20))
-                    ' fecha_RFL = WorksheetFunction.Max(intervalo_RFL)
-                    ' fecha_RFL = WorksheetFunction.Min(intervalo_BB)
 
                     For Each intervalo_RFL In Range(celda.Offset(0, -21), celda.Offset(-num_coches + 2, -21))
                         If intervalo_RFL >= intervalo_RFL.Offset(-1, 0) Then
@@ -292,7 +289,6 @@ Sub Cargador()
                             fecha_BB = intervalo_BB.Offset(-1, 0)
                         End If
                     Next intervalo_BB
-
                     
                 ' Insertamos en las columnas correspondientes de la hoja de carga el origen y destino y fechas
                     With Workbooks(loads_workbook_name).Sheets("Hoja1")
@@ -305,7 +301,10 @@ Sub Cargador()
                             .Cells(1 + num_cargas, 14).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                         
                         'Fechas de recogida hasta y entrega hasta
-                            .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), 3), fecha_BB)
+                            .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), dias_transporte), fecha_BB)
+                        
+                        'Código proveedor
+                            .Cells(1 + num_cargas, 16).Value = codigo_proveedor
                         
                         'Número de carga
                             .Cells(1 + num_cargas, 20).Value = num_cargas
@@ -327,21 +326,16 @@ Sub Cargador()
 
             End If
 
-            ' Debug.Print "Número de coches " & huecos_ocupados
-            ' Debug.Print "Número de cargas " & num_cargas
+        ' Apunto la última línea que se encuentra al pulsar CTRL + ABAJO en la celda AM2
+            ultimo_coche = celda.Row
 
-    ultimo_coche = celda.Row
     Next celda
 
 ' Comienzo la comprobación de si se han quedado coches sueltos sin carga asignada por no llegar a 8 huecos,
-
     If huecos_ocupados > 0 Then
         num_cargas = num_cargas + 1
         
         ' Determinamos la fecha mínima para la carga, para ello damos valor a las dos matrices de las fechas correspondientes de los vehículos de la carga
-'            fecha_RFL = WorksheetFunction.Max(Cells(ultimo_coche, 18), Cells(ultimo_coche - num_coches, 18))
-'            fecha_BB = WorksheetFunction.Min(Cells(ultimo_coche, 19), Cells(ultimo_coche - num_coches, 19))
-
             For Each intervalo_RFL_2 In Range(Cells(ultimo_coche, 18), Cells(ultimo_coche - num_coches + 1, 18))
                 If intervalo_RFL_2 >= intervalo_RFL_2.Offset(-1, 0) Then
                     fecha_RFL = intervalo_RFL_2.Value
@@ -358,7 +352,6 @@ Sub Cargador()
                 End If
             Next intervalo_BB_2
 
-
         ' Insertamos en las columnas correspondientes de la hoja de carga el origen y destino y fechas
             With Workbooks(loads_workbook_name).Sheets("Hoja1")
                     .Cells(1 + num_cargas, 10).Value = origen
@@ -370,7 +363,10 @@ Sub Cargador()
                     .Cells(1 + num_cargas, 14).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                 
                 'Fechas de recogida hasta y entrega hasta
-                    .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), 3), fecha_BB)
+                    .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), dias_transporte), fecha_BB)
+                
+                'Código proveedor
+                    .Cells(1 + num_cargas, 16).Value = codigo_proveedor
                 
                 'Número de carga
                     .Cells(1 + num_cargas, 20).Value = num_cargas
@@ -392,21 +388,21 @@ Sub Cargador()
                     End If
 
             End With
+
             fecha_RFL = 1
             fecha_BB = 50000
             huecos_ocupados = 0
         
     End If
-    
 
 ' Selecciono las fechas de la hoja de carga creada y les aplico el formato correcto
-
     Workbooks(loads_workbook_name).Activate
     Sheets("Hoja1").Range(Cells(2, 12), Cells(2 + num_cargas, 15)).NumberFormat = "m/d/yyyy"
 
 ' Autoajusto el ancho de las columnas
-
     Range("A:T").Columns.AutoFit
+
+' Enciendo el cálculo automático de Excel
     Application.Calculation = xlCalculationAutomatic
 
 ' Fin de la macro
@@ -416,59 +412,61 @@ End Sub
 
 Private Sub Crear_Hoja_Carga(ByVal nombre_origen As String, nombre_destino As String, wb_name As String)
 
+' Esta macro sólo sirve para crear el archivo de ETC en blanco y guardarlo en la ruta de destino que se especifique.
+' Si más adelante cambia el formato de la importación, deberéis cambiarlo aquí primero para ajustar los encabezados.
+
 Dim loads_workbook As String
 
 Workbooks.Add (xlWBATWorksheet)
 loads_workbook = ActiveWorkbook.Name
 
 
-'Damos el formato adecuado al libro, nombrando los encabezados
+' Damos el formato adecuado al libro, nombrando los encabezados
+    With Workbooks(loads_workbook).Sheets("Hoja1")
+        .Range("A1").Value = "Centro"
+        .Range("B1").Value = "Ceco"
+        .Range("C1").Value = "Tipo"
+        .Range("D1").Value = "NumOrden"
+        .Range("E1").Value = "Matricula"
+        .Range("F1").Value = "Bastidor"
+        .Range("G1").Value = "NombreMarca"
+        .Range("H1").Value = "Modelo"
+        .Range("I1").Value = "ConcesionarioRecomprador"
+        .Range("J1").Value = "SucursalRecompra"
+        .Range("K1").Value = "CampaDestino"
+        .Range("L1").Value = "RecogidaDesde"
+        .Range("M1").Value = "RecogidaHasta"
+        .Range("N1").Value = "EntregaDesde"
+        .Range("O1").Value = "EntregaHasta"
+        .Range("P1").Value = "Proveedor"
+        .Range("Q1").Value = "Importe"
+        .Range("R1").Value = "minimoVhs"
+        .Range("S1").Value = "maximoVhs"
+        .Range("T1").Value = "Carga"
+        
+    End With
 
-With Workbooks(loads_workbook).Sheets("Hoja1")
-    .Range("A1").Value = "Centro"
-    .Range("B1").Value = "Ceco"
-    .Range("C1").Value = "Tipo"
-    .Range("D1").Value = "NumOrden"
-    .Range("E1").Value = "Matricula"
-    .Range("F1").Value = "Bastidor"
-    .Range("G1").Value = "NombreMarca"
-    .Range("H1").Value = "Modelo"
-    .Range("I1").Value = "ConcesionarioRecomprador"
-    .Range("J1").Value = "SucursalRecompra"
-    .Range("K1").Value = "CampaDestino"
-    .Range("L1").Value = "RecogidaDesde"
-    .Range("M1").Value = "RecogidaHasta"
-    .Range("N1").Value = "EntregaDesde"
-    .Range("O1").Value = "EntregaHasta"
-    .Range("P1").Value = "Proveedor"
-    .Range("Q1").Value = "Importe"
-    .Range("R1").Value = "minimoVhs"
-    .Range("S1").Value = "maximoVhs"
-    .Range("T1").Value = "Carga"
-    
-End With
+' Aplicamos el color azul de fondo, blanco en la fuente y negrita
+    With Workbooks(loads_workbook).Sheets("Hoja1").Range("A1:T1")
+        .Interior.Color = RGB(91, 155, 213)
+        .Font.Color = vbWhite
+        .Font.Bold = True
+        
+    End With
 
+' Autoajusta las columnas y centra el contenido de las celdas
+    With Workbooks(loads_workbook).Sheets("Hoja1").Range("A:T")
+        .HorizontalAlignment = xlHAlignCenter
+        .Columns.AutoFit
+        
+    End With
 
-With Workbooks(loads_workbook).Sheets("Hoja1").Range("A1:T1")
-    .Interior.Color = RGB(91, 155, 213)
-    .Font.Color = vbWhite
-    .Font.Bold = True
-    
-End With
+' Guarda el archivo en la ruta señalada IMPORTANTE ACTUALIZAR A LA DIRECCIÓN QUE CADA UNO QUIERA!!
+    ActiveWorkbook.SaveAs Filename:="C:\Users\luisalbarracin\Desktop\Test\Carga_Automática " _
+    & Format(Now(), "YYYY.MM.DD") & "_" & nombre_origen & "-" & nombre_destino & ".xlsx" _
+    , FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
 
-With Workbooks(loads_workbook).Sheets("Hoja1").Range("A:T")
-    .HorizontalAlignment = xlHAlignCenter
-    .Columns.AutoFit
-    
-End With
-
-'Guarda el archivo en la ruta señalada
-
-ActiveWorkbook.SaveAs Filename:="C:\Users\luisalbarracin\Desktop\Test\Carga_Automática " _
-& Format(Now(), "YYYY.MM.DD") & "_" & nombre_origen & "-" & nombre_destino & ".xlsx" _
-, FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
-
-
-Workbooks(wb_name).Activate
+' Activa el libro donde están los datos de los vehículos a cargar. IMPORTANTE!! Si no lo activa la macro pierde las referencias y no funcionará.
+    Workbooks(wb_name).Activate
 
 End Sub
