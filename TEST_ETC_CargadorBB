@@ -1,6 +1,6 @@
 Sub Cargador()
 
-' Versión 1.0.0
+' Versión 1.0.1
 
     On Error Resume Next
 
@@ -304,7 +304,11 @@ Sub Cargador()
                             .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), dias_transporte), fecha_BB)
                         
                         'Código proveedor
-                            .Cells(1 + num_cargas, 16).Value = codigo_proveedor
+                            If codigo_proveedor = 0 Then
+                                .Cells(1 + num_cargas, 16).Value = "Pte. Añadir"
+                                Else
+                                .Cells(1 + num_cargas, 16).Value = codigo_proveedor
+                            End If
                         
                         'Número de carga
                             .Cells(1 + num_cargas, 20).Value = num_cargas
@@ -366,8 +370,12 @@ Sub Cargador()
                     .Cells(1 + num_cargas, 15).Value = WorksheetFunction.Min(WorksheetFunction.WorkDay_Intl(WorksheetFunction.Min(fecha_BB, fecha_RFL), dias_transporte), fecha_BB)
                 
                 'Código proveedor
-                    .Cells(1 + num_cargas, 16).Value = codigo_proveedor
-                
+                    If codigo_proveedor = 0 Then
+                        .Cells(1 + num_cargas, 16).Value = "Pte. Añadir"
+                        Else
+                        .Cells(1 + num_cargas, 16).Value = codigo_proveedor
+                    End If
+                    
                 'Número de carga
                     .Cells(1 + num_cargas, 20).Value = num_cargas
 
