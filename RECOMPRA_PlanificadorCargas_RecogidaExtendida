@@ -1,6 +1,6 @@
 Sub Cargador()
 
-' Versión 1.0.1
+' Versión 1.0.2
 
     On Error Resume Next
 
@@ -248,8 +248,6 @@ Sub Cargador()
 
     End With
 
-' Especifico que la variable de control control_ultima_carga es FALSO
-    control_ultima_carga = False
 
 ' Comienza el bucle en el que determina el número el hueco de cada vehículo de la lista en el camión, hasta llegar a 8
     For Each celda In Range("AM2", Range("AM2").End(xlDown))
@@ -258,7 +256,7 @@ Sub Cargador()
             texto_grupo = celda.Value
         
         ' Si la variable texto_grupo tiene un valor en el diccionario de los grupos especiales, el espacio en el camión se sumará por ese valor. Sino, sumará un hueco.
-            Debug.Print vhc_groups.Exists(texto_grupo)
+            'Debug.Print vhc_groups.Exists(texto_grupo)
             If vhc_groups.Exists(texto_grupo) = True Then
                 huecos_ocupados = huecos_ocupados + vhc_groups.Item(texto_grupo)
                 num_coches = num_coches + 1
@@ -274,18 +272,20 @@ Sub Cargador()
                 num_cargas = num_cargas + 1
                 huecos_ocupados = 0
 
-                    fecha_RFL = celda.Offset(-num_coches + 2, -21)
+                    fecha_RFL = celda.Offset(-num_coches + 1, -21)
                     For Each intervalo_RFL In Range(celda.Offset(0, -21), celda.Offset(-num_coches + 1, -21))
-                        If intervalo_RFL>=fecha_RFL Then
+                        If intervalo_RFL >= fecha_RFL Then
                             fecha_RFL = intervalo_RFL.Value
                         End If
+                        Debug.Print "Fecha_RFL: " & fecha_RFL
                     Next intervalo_RFL
                     
                     fecha_BB = celda.Offset(-num_coches + 1, -20)
                     For Each intervalo_BB In Range(celda.Offset(0, -20), celda.Offset(-num_coches + 2, -20))
-                        If intervalo_BB<=fecha_BB Then
-                            fecha_BB = intervalo_BB-Value
+                        If intervalo_BB <= fecha_BB Then
+                            fecha_BB = intervalo_BB - Value
                         End If
+                        Debug.Print "Fecha_BB útlima carga: " & fecha_BB
                     Next intervalo_BB
                     
                 ' Insertamos en las columnas correspondientes de la hoja de carga el origen y destino y fechas
@@ -293,7 +293,7 @@ Sub Cargador()
                             .Cells(1 + num_cargas, 10).Value = origen
                             .Cells(1 + num_cargas, 11).Value = destino
 
-                        'Fechas de recogida desde, recogida hasta y entrega desde
+                        'Fechas de recogida desde y entrega desde
                             .Cells(1 + num_cargas, 12).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                             .Cells(1 + num_cargas, 14).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                         
@@ -329,12 +329,16 @@ Sub Cargador()
             End If
 
         ' Apunto la última línea que se encuentra al pulsar CTRL + ABAJO en la celda AM2
-            ultimo_coche = celda.Row
+            ultimo_coche = Range("AM2").End(xlDown).Row
 
     Next celda
 
 ' Comienzo la comprobación de si se han quedado coches sueltos sin carga asignada por no llegar a 8 huecos,
     If huecos_ocupados > 0 Then
+
+        ' Apunto la última línea que se encuentra al pulsar CTRL + ABAJO en la celda AM2
+            ultimo_coche = Range("AM2").End(xlDown).Row
+        
         num_cargas = num_cargas + 1
         
         ' Determinamos la fecha mínima para la carga, para ello damos valor a las dos matrices de las fechas correspondientes de los vehículos de la carga
@@ -342,14 +346,17 @@ Sub Cargador()
             For Each intervalo_RFL_2 In Range(Cells(ultimo_coche, 18), Cells(ultimo_coche - num_coches + 1, 18))
                 If intervalo_RFL_2 >= fecha_RFL Then
                     fecha_RFL = intervalo_RFL_2.Value
-                End If                
+                End If
+            Debug.Print "Fecha_RFL última carga: " & fecha_RFL
             Next intervalo_RFL_2
             
             fecha_BB = Cells(ultimo_coche - num_coches + 1, 19)
             For Each intervalo_BB_2 In Range(Cells(ultimo_coche, 19), Cells(ultimo_coche - num_coches + 1, 19))
-                If  intervalo_BB_2 <= fecha_BB Then
+                If intervalo_BB_2 <= fecha_BB Then
                     fecha_BB = intervalo_BB_2.Value
                 End If
+            Debug.Print "Fecha_BB útlima carga: " & fecha_BB
+            
             Next intervalo_BB_2
 
         ' Insertamos en las columnas correspondientes de la hoja de carga el origen y destino y fechas
@@ -358,7 +365,7 @@ Sub Cargador()
                     .Cells(1 + num_cargas, 11).Value = destino
 
                 'Fechas de recogida desde, recogida hasta y entrega desde
-                    .Cells(1 + num_cargas, 12).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
+                    .Cells(1 + num_cargas, 12).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)                    
                     .Cells(1 + num_cargas, 14).Value = WorksheetFunction.Min(fecha_BB, fecha_RFL)
                 
                 'Fechas de recogida hasta y entrega hasta
